@@ -42,6 +42,7 @@ Expression add(const std::vector<Expression> & args){
   return Expression(result);
 };
 
+
 Expression mul(const std::vector<Expression> & args){
  
   // check all aruments are numbers, while multiplying
@@ -102,6 +103,48 @@ Expression div(const std::vector<Expression> & args){
     throw SemanticError("Error in call to division: invalid number of arguments.");
   }
   return Expression(result);
+};
+
+Expression sq(const std::vector<Expression> & args) {
+
+	double result = 0;
+
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadNumber()) {
+			if ((abs(args[0].head().asNumber())) == args[0].head().asNumber())
+			{
+				result = std::sqrt(args[0].head().asNumber());
+			}
+			else
+				throw SemanticError("Error in call to sqrt: negative argument.");
+			
+		}
+		else {
+			throw SemanticError("Error in call to sqrt: invalid argument.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to sqrt: invalid number of arguments.");
+	}
+	return Expression(result);
+};
+
+Expression pow(const std::vector<Expression> & args) {
+
+	double result = 0;
+
+	if (nargs_equal(args, 2)) {
+		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
+			result = std::pow(args[0].head().asNumber(), args[1].head().asNumber());
+		}
+		else {
+			throw SemanticError("Error in call to power: invalid argument.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to power: invalid number of arguments.");
+	}
+	return Expression(result);
 };
 
 const double PI = std::atan2(0, -1);
@@ -198,5 +241,11 @@ void Environment::reset(){
   envmap.emplace("*", EnvResult(ProcedureType, mul)); 
 
   // Procedure: div;
-  envmap.emplace("/", EnvResult(ProcedureType, div)); 
+  envmap.emplace("/", EnvResult(ProcedureType, div));
+
+  // Procedure: div;
+  envmap.emplace("sqrt", EnvResult(ProcedureType, sq));
+
+  // Procedure: div;
+  envmap.emplace("^", EnvResult(ProcedureType, pow));
 }
