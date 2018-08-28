@@ -147,6 +147,48 @@ Expression pow(const std::vector<Expression> & args) {
 	return Expression(result);
 };
 
+Expression logn(const std::vector<Expression> & args) {
+
+	double result = 0;
+
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadNumber()) {
+			if ((abs(args[0].head().asNumber())) == args[0].head().asNumber())
+			{
+				result = log(args[0].head().asNumber());
+			}
+			else
+				throw SemanticError("Error in call to ln: negative argument.");
+
+		}
+		else {
+			throw SemanticError("Error in call to ln: invalid argument.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to ln: invalid number of arguments.");
+	}
+	return Expression(result);
+};
+
+Expression sn(const std::vector<Expression> & args) {
+
+	double result = 0;
+
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadNumber()) {
+			result = sin(args[0].head().asNumber());
+		}
+		else {
+			throw SemanticError("Error in call to sin: invalid argument.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to sin: invalid number of arguments.");
+	}
+	return Expression(result);
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 
@@ -243,9 +285,15 @@ void Environment::reset(){
   // Procedure: div;
   envmap.emplace("/", EnvResult(ProcedureType, div));
 
-  // Procedure: div;
+  // Procedure: sqrt;
   envmap.emplace("sqrt", EnvResult(ProcedureType, sq));
 
-  // Procedure: div;
+  // Procedure: pow;
   envmap.emplace("^", EnvResult(ProcedureType, pow));
+
+  // Procedure: logn;
+  envmap.emplace("ln", EnvResult(ProcedureType, logn));
+
+  // Procedure: sin;
+  envmap.emplace("sin", EnvResult(ProcedureType, sn));
 }
