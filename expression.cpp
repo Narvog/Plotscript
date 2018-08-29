@@ -53,6 +53,10 @@ bool Expression::isHeadSymbol() const noexcept{
   return m_head.isSymbol();
 }  
 
+bool Expression::isHeadComplex() const noexcept {
+	return m_head.isComplex();
+}
+
 
 void Expression::append(const Atom & a){
   m_tail.emplace_back(a);
@@ -108,6 +112,9 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
     else if(head.isNumber()){
       return Expression(head);
     }
+	else if (head.isComplex()) {
+		return Expression(head);
+	}
     else{
       throw SemanticError("Error during evaluation: Invalid type in terminal expression");
     }
@@ -194,8 +201,15 @@ Expression Expression::eval(Environment & env){
 std::ostream & operator<<(std::ostream & out, const Expression & exp){
 
   out << "(";
-  out << exp.head();
-
+  if (exp.isHeadComplex())
+  {
+	  out << exp.head().asComplex().first << "," << exp.head().asComplex().second;
+  }
+  else
+  {
+	  out << exp.head();
+  }
+  
   for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
     out << *e;
   }

@@ -46,6 +46,6 @@ Vagrant.configure("2") do |config|
 
   # setup the VM
   config.vm.provision "shell", inline: $bootstrap
-  
+
 end
 

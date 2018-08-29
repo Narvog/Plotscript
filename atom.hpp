@@ -20,6 +20,9 @@ public:
   /// Construct an Atom of type Number with value
   Atom(double value);
 
+  /// Construct an Atom of type Complex with pair value
+  Atom(std::pair <double, double> value);
+
   /// Construct an Atom of type Symbol named value
   Atom(const std::string & value);
 
@@ -44,11 +47,17 @@ public:
   /// predicate to determine if an Atom is of type Symbol
   bool isSymbol() const noexcept;
 
+  ///predicate to determine if an Atom is of type Complex
+  bool isComplex() const noexcept;
+
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
 
   /// value of Atom as a number, returns empty-string if not a Symbol
   std::string asSymbol() const noexcept;
+
+  ///value of Atom as a number, returns 0,0 if not a Complex
+  std::pair <double, double> asComplex() const noexcept;
 
   /// equality comparison based on type and value
   bool operator==(const Atom & right) const noexcept;
@@ -56,7 +65,7 @@ public:
 private:
 
   // internal enum of known types
-  enum Type {NoneKind, NumberKind, SymbolKind};
+  enum Type {NoneKind, NumberKind, SymbolKind, ComplexKind};
 
   // track the type
   Type m_type;
@@ -66,6 +75,7 @@ private:
   union {
     double numberValue;
     std::string stringValue;
+	std::pair <double, double> complexValue;
   };
 
   // helper to set type and value of Number
@@ -73,6 +83,9 @@ private:
 
   // helper to set type and value of Symbol
   void setSymbol(const std::string & value);
+
+  //helper to set the type and value of a Complex
+  void setComplex(const std::pair <double, double> value);
 };
 
 /// inequality comparison for Atom

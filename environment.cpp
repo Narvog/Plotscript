@@ -228,6 +228,8 @@ Expression tn(const std::vector<Expression> & args) {
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 
+const std::pair <double, double> IMI = std::make_pair(0.0, 1.0);
+
 Environment::Environment(){
 
   reset();
@@ -308,6 +310,9 @@ void Environment::reset(){
 
   // Built-In value of e
   envmap.emplace("e", EnvResult(ExpressionType, Expression(EXP)));
+
+  // Built-In value of I
+  envmap.emplace("I", EnvResult(ExpressionType, Expression(IMI)));
 
   // Procedure: add;
   envmap.emplace("+", EnvResult(ProcedureType, add)); 
