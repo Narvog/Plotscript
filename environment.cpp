@@ -225,6 +225,42 @@ Expression tn(const std::vector<Expression> & args) {
 	return Expression(result);
 };
 
+Expression IMreal(const std::vector<Expression> & args) {
+
+	double result = 0;
+
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+			result = args[0].head().asComplex().first;
+		}
+		else {
+			throw SemanticError("Error in call to real: real called on non-Complex number.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to real: invalid number of arguments.");
+	}
+	return Expression(result);
+};
+
+Expression IMimag(const std::vector<Expression> & args) {
+
+	double result = 0;
+
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+			result = args[0].head().asComplex().second;
+		}
+		else {
+			throw SemanticError("Error in call to imag: imag called on non-Complex number.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to imag: invalid number of arguments.");
+	}
+	return Expression(result);
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 
@@ -337,8 +373,16 @@ void Environment::reset(){
 
   // Procedure: sin;
   envmap.emplace("sin", EnvResult(ProcedureType, sn));
+
   // Procedure: cos;
   envmap.emplace("cos", EnvResult(ProcedureType, cn));
+
   // Procedure: tan;
   envmap.emplace("tan", EnvResult(ProcedureType, tn));
+
+  // Procedure: real;
+  envmap.emplace("real", EnvResult(ProcedureType, IMreal));
+
+  // Procedure: imag;
+  envmap.emplace("imag", EnvResult(ProcedureType, IMimag));
 }
