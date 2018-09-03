@@ -60,17 +60,31 @@ Expression add(const std::vector<Expression> & args){
 Expression mul(const std::vector<Expression> & args){
  
   // check all aruments are numbers, while multiplying
-  double result = 1;
+	double result = 1.0;
+	bool hasImag = false;
+	complex<double> Ires = (1.0, 1.0);
   for( auto & a :args){
     if(a.isHeadNumber()){
-      result *= a.head().asNumber();      
+      Ires = Ires * a.head().asNumber();      
     }
+	else if (a.isHeadComplex()) {
+		hasImag = true;
+		Ires = Ires * a.head().asComplex();
+	}
     else{
-      throw SemanticError("Error in call to mul, argument not a number");
+      throw SemanticError("Error in call to mul, argument not a number or a complex");
     }
   }
-
-  return Expression(result);
+  if (!hasImag)
+  {
+	  result = Ires.real();
+	  return Expression(result);
+  }
+  else
+  {
+	  return Expression(Ires);
+  }
+  
 };
 
 Expression subneg(const std::vector<Expression> & args){
@@ -132,12 +146,30 @@ Expression subneg(const std::vector<Expression> & args){
 
 Expression div(const std::vector<Expression> & args){
 
-  double result = 0;  
+	double result = 0.0;
+	bool hasImag = false;
+	complex<double> Ires = (0.0, 0.0);
+
 
   if(nargs_equal(args,2)){
     if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
       result = args[0].head().asNumber() / args[1].head().asNumber();
     }
+	else if ((args[0].isHeadComplex()) && (args[1].isHeadNumber()))
+	{
+		hasImag = true;
+		Ires = args[0].head().asComplex() / args[1].head().asNumber();
+	}
+	else if ((args[0].isHeadNumber()) && (args[1].isHeadComplex()))
+	{
+		hasImag = true;
+		Ires = args[0].head().asNumber() / args[1].head().asComplex();
+	}
+	else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex()))
+	{
+		hasImag = true;
+		Ires = args[0].head().asComplex() / args[1].head().asComplex();
+	}
     else{      
       throw SemanticError("Error in call to division: invalid argument.");
     }
@@ -145,7 +177,14 @@ Expression div(const std::vector<Expression> & args){
   else{
     throw SemanticError("Error in call to division: invalid number of arguments.");
   }
-  return Expression(result);
+  if (!hasImag)
+  {
+	  return Expression(result);
+  }
+  else
+  {
+	  return Expression(Ires);
+  }
 };
 
 Expression sq(const std::vector<Expression> & args) {
