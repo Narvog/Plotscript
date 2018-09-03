@@ -199,22 +199,20 @@ Expression Expression::eval(Environment & env){
 
 
 std::ostream & operator<<(std::ostream & out, const Expression & exp){
-
-  out << "(";
-  if (exp.isHeadComplex())
-  {
-	  out << exp.head().asComplex().first << "," << exp.head().asComplex().second;
-  }
-  else
-  {
-	  out << exp.head();
-  }
+	if (!exp.isHeadComplex())
+	{
+		out << "(";
+	}
+  out << exp.head();
   
   for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
     out << *e;
   }
 
-  out << ")";
+  if (!exp.isHeadComplex())
+  {
+	  out << ")";
+  }
 
   return out;
 }

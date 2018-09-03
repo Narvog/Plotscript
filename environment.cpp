@@ -29,19 +29,17 @@ Expression default_proc(const std::vector<Expression> & args){
 Expression add(const std::vector<Expression> & args){
 
   // check all aruments are numbers, while adding
-  double result = 0;
-  double imag = 0;
+  double result = 0.0;
   bool hasImag = false;
-  std::pair <double, double> Ires;
+  complex<double> Ires = (0.0, 0.0);
   for( auto & a :args){
     if(a.isHeadNumber()){
-      result += a.head().asNumber();      
+      Ires = Ires + a.head().asNumber();      
     }
 	else if (a.isHeadComplex())
 	{
 		hasImag = true;
-		result += a.head().asComplex().first;
-		imag += a.head().asComplex().second;
+		Ires = Ires + a.head().asComplex();
 	}
     else{
       throw SemanticError("Error in call to add, argument not a number or a complex number");
@@ -49,11 +47,11 @@ Expression add(const std::vector<Expression> & args){
   }
   if (!hasImag)
   {
+	  result = Ires.real();
 	  return Expression(result);
   }
   else
   {
-	  Ires = std::make_pair(result, imag);
 	  return Expression(Ires);
   }
 };
@@ -77,20 +75,18 @@ Expression mul(const std::vector<Expression> & args){
 
 Expression subneg(const std::vector<Expression> & args){
 
-  double result = 0;
-  double imag = 0;
+  double result = 0.0;
   bool hasImag = false;
-  std::pair <double, double> Ires;
+  complex<double> Ires = (0.0,0.0);
 
   // preconditions
   if(nargs_equal(args,1)){
     if(args[0].isHeadNumber()){
-      result = -args[0].head().asNumber();
+      Ires = -args[0].head().asNumber();
     }
 	else if (args[0].isHeadComplex()) {
 		hasImag = true;
-		result = -args[0].head().asComplex().first;
-		imag = -args[0].head().asComplex().second;
+		Ires = -args[0].head().asComplex();
 	}
     else{
       throw SemanticError("Error in call to negate: invalid argument.");
@@ -98,25 +94,22 @@ Expression subneg(const std::vector<Expression> & args){
   }
   else if(nargs_equal(args,2)){
     if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
-      result = args[0].head().asNumber() - args[1].head().asNumber();
+      Ires = args[0].head().asNumber() - args[1].head().asNumber();
     }
 	else if ((args[0].isHeadComplex()) && (args[1].isHeadNumber()))
 	{
 		hasImag = true;
-		result = args[0].head().asComplex().first - args[1].head().asNumber();
-		imag = args[0].head().asComplex().second;
+		Ires = args[0].head().asComplex() - args[1].head().asNumber();
 	}
 	else if ((args[0].isHeadNumber()) && (args[1].isHeadComplex()))
 	{
 		hasImag = true;
-		result = args[0].head().asNumber() - args[1].head().asComplex().first;
-		imag = -args[1].head().asComplex().second;
+		Ires = args[0].head().asNumber() - args[1].head().asComplex();
 	}
 	else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex()))
 	{
 		hasImag = true;
-		result = args[0].head().asComplex().first - args[1].head().asComplex().first;
-		imag = args[0].head().asComplex().second - args[1].head().asComplex().second;
+		Ires = args[0].head().asComplex() - args[1].head().asComplex();
 	}
     else{      
       throw SemanticError("Error in call to subtraction: invalid argument.");
@@ -128,11 +121,11 @@ Expression subneg(const std::vector<Expression> & args){
 
   if (!hasImag)
   {
+	  result = Ires.real();
 	  return Expression(result);
   }
   else
   {
-	  Ires = std::make_pair(result, imag);
 	  return Expression(Ires);
   }
 };
@@ -281,7 +274,7 @@ Expression IMreal(const std::vector<Expression> & args) {
 
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
-			result = args[0].head().asComplex().first;
+			result = args[0].head().asComplex().real();
 		}
 		else {
 			throw SemanticError("Error in call to real: real called on non-Complex number.");
@@ -299,7 +292,7 @@ Expression IMimag(const std::vector<Expression> & args) {
 
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
-			result = args[0].head().asComplex().second;
+			result = args[0].head().asComplex().imag();
 		}
 		else {
 			throw SemanticError("Error in call to imag: imag called on non-Complex number.");
@@ -314,7 +307,7 @@ Expression IMimag(const std::vector<Expression> & args) {
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 
-const std::pair <double, double> IMI = std::make_pair(0.0, 1.0);
+const complex<double> IMI(0.0, 1.0);
 
 Environment::Environment(){
 

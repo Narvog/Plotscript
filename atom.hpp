@@ -5,7 +5,9 @@ Defines the Atom type and associated functions.
 #define ATOM_HPP
 
 #include "token.hpp"
+#include <complex>
 
+using std::complex;
 /*! \class Atom
 \brief A variant type that may be a Number or Symbol or the default type None.
 
@@ -21,7 +23,7 @@ public:
   Atom(double value);
 
   /// Construct an Atom of type Complex with pair value
-  Atom(std::pair <double, double> value);
+  Atom(complex<double> value);
 
   /// Construct an Atom of type Symbol named value
   Atom(const std::string & value);
@@ -57,7 +59,7 @@ public:
   std::string asSymbol() const noexcept;
 
   ///value of Atom as a number, returns 0,0 if not a Complex
-  std::pair <double, double> asComplex() const noexcept;
+  complex<double> asComplex() const noexcept;
 
   /// equality comparison based on type and value
   bool operator==(const Atom & right) const noexcept;
@@ -75,7 +77,7 @@ private:
   union {
     double numberValue;
     std::string stringValue;
-	std::pair <double, double> complexValue;
+	complex<double> complexValue;
   };
 
   // helper to set type and value of Number
@@ -85,7 +87,7 @@ private:
   void setSymbol(const std::string & value);
 
   //helper to set the type and value of a Complex
-  void setComplex(const std::pair <double, double> value);
+  void setComplex(const complex<double> value);
 };
 
 /// inequality comparison for Atom

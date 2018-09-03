@@ -12,7 +12,7 @@ Atom::Atom(double value){
   setNumber(value);
 }
 
-Atom::Atom(std::pair <double, double> value) {
+Atom::Atom(complex<double> value) {
 
   setComplex(value);
 }
@@ -116,7 +116,7 @@ void Atom::setSymbol(const std::string & value){
   new (&stringValue) std::string(value);
 }
 
-void Atom::setComplex(const std::pair <double, double> value) {
+void Atom::setComplex(const complex<double> value) {
 	m_type = ComplexKind;
 	complexValue = value;
 }
@@ -138,9 +138,9 @@ std::string Atom::asSymbol() const noexcept{
   return result;
 }
 
-std::pair <double, double> Atom::asComplex() const noexcept {
+complex<double> Atom::asComplex() const noexcept {
 
-	return (m_type == ComplexKind) ? complexValue : std::pair <double, double> (0.0, 0.0);
+	return (m_type == ComplexKind) ? complexValue : complex<double> (0.0, 0.0);
 }
 
 bool Atom::operator==(const Atom & right) const noexcept{
@@ -188,6 +188,9 @@ std::ostream & operator<<(std::ostream & out, const Atom & a){
   }
   if(a.isSymbol()){
     out << a.asSymbol();
+  }
+  if (a.isComplex()) {
+	  out << a.asComplex();
   }
   return out;
 }
