@@ -196,7 +196,7 @@ Expression sq(const std::vector<Expression> & args) {
 
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
-			if ((abs(args[0].head().asNumber())) == args[0].head().asNumber())
+			if ((args[0].head().asNumber()) >= 0)
 			{
 				result = std::sqrt(args[0].head().asNumber());
 			}
@@ -276,9 +276,13 @@ Expression logn(const std::vector<Expression> & args) {
 
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
-			if ((abs(args[0].head().asNumber())) == args[0].head().asNumber())
+			if ((args[0].head().asNumber()) > 0)
 			{
 				result = log(args[0].head().asNumber());
+			}
+			else if ((args[0].head().asNumber()) == 0)
+			{
+				throw SemanticError("Error in call to ln: ln called  on 0.");
 			}
 			else
 				throw SemanticError("Error in call to ln: negative argument.");
