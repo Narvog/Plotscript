@@ -31,7 +31,7 @@ Expression add(const std::vector<Expression> & args){
   // check all aruments are numbers, while adding
   double result = 0.0;
   bool hasImag = false;
-  complex<double> Ires = (0.0, 0.0);
+  complex<double> Ires(0.0, 0.0);
   for( auto & a :args){
     if(a.isHeadNumber()){
       Ires = Ires + a.head().asNumber();      
@@ -62,7 +62,7 @@ Expression mul(const std::vector<Expression> & args){
   // check all aruments are numbers, while multiplying
 	double result = 1.0;
 	bool hasImag = false;
-	complex<double> Ires = (1.0, 1.0);
+	complex<double> Ires(1.0, 1.0);
   for( auto & a :args){
     if(a.isHeadNumber()){
       Ires = Ires * a.head().asNumber();      
@@ -91,7 +91,7 @@ Expression subneg(const std::vector<Expression> & args){
 
   double result = 0.0;
   bool hasImag = false;
-  complex<double> Ires = (0.0,0.0);
+  complex<double> Ires(0.0,0.0);
 
   // preconditions
   if(nargs_equal(args,1)){
@@ -148,7 +148,7 @@ Expression div(const std::vector<Expression> & args){
 
 	double result = 0.0;
 	bool hasImag = false;
-	complex<double> Ires = (0.0, 0.0);
+	complex<double> Ires(0.0, 0.0);
 
 
   if(nargs_equal(args,2)){
@@ -343,6 +343,60 @@ Expression IMimag(const std::vector<Expression> & args) {
 	return Expression(result);
 };
 
+Expression IMmag(const std::vector<Expression> & args) {
+
+	double result = 0;
+
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+			result = std::abs(args[0].head().asComplex());
+		}
+		else {
+			throw SemanticError("Error in call to mag: mag called on non-Complex number.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to mag: invalid number of arguments.");
+	}
+	return Expression(result);
+};
+
+Expression IMarg(const std::vector<Expression> & args) {
+
+	double result = 0;
+
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+			result = std::arg(args[0].head().asComplex());
+		}
+		else {
+			throw SemanticError("Error in call to arg: arg called on non-Complex number.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to arg: invalid number of arguments.");
+	}
+	return Expression(result);
+};
+
+Expression IMconj(const std::vector<Expression> & args) {
+
+	complex<double> Ires;
+
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+			Ires = std::conj(args[0].head().asComplex());
+		}
+		else {
+			throw SemanticError("Error in call to conj: conj called on non-Complex number.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to conj: invalid number of arguments.");
+	}
+	return Expression(Ires);
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 
@@ -467,4 +521,13 @@ void Environment::reset(){
 
   // Procedure: imag;
   envmap.emplace("imag", EnvResult(ProcedureType, IMimag));
+
+  // Procedure: mag;
+  envmap.emplace("mag", EnvResult(ProcedureType, IMmag));
+
+  // Procedure: arg;
+  envmap.emplace("arg", EnvResult(ProcedureType, IMarg));
+
+  // Procedure: conj;
+  envmap.emplace("conj", EnvResult(ProcedureType, IMconj));
 }
