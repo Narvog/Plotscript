@@ -62,7 +62,7 @@ Expression mul(const std::vector<Expression> & args){
   // check all aruments are numbers, while multiplying
 	double result = 1.0;
 	bool hasImag = false;
-	complex<double> Ires(1.0, 1.0);
+	complex<double> Ires(1.0, 0.0);
   for( auto & a :args){
     if(a.isHeadNumber()){
       Ires = Ires * a.head().asNumber();      
@@ -190,6 +190,9 @@ Expression div(const std::vector<Expression> & args){
 Expression sq(const std::vector<Expression> & args) {
 
 	double result = 0;
+	complex<double> Ires(0.0, 0.0);
+	complex<double> temp(0.0, 0.0);
+	bool hasImag = false;
 
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
@@ -197,9 +200,15 @@ Expression sq(const std::vector<Expression> & args) {
 			{
 				result = std::sqrt(args[0].head().asNumber());
 			}
-			else
-				throw SemanticError("Error in call to sqrt: negative argument.");
-			
+			else {
+				hasImag = true;
+				temp = temp + args[0].head().asNumber();
+				Ires = std::sqrt(temp);
+			}
+		}
+		else if (args[0].isHeadComplex()) {
+			hasImag = true;
+			Ires = std::sqrt(args[0].head().asComplex());
 		}
 		else {
 			throw SemanticError("Error in call to sqrt: invalid argument.");
@@ -208,16 +217,41 @@ Expression sq(const std::vector<Expression> & args) {
 	else {
 		throw SemanticError("Error in call to sqrt: invalid number of arguments.");
 	}
-	return Expression(result);
+	if (!hasImag)
+	{
+		return Expression(result);
+	}
+	else
+	{
+		return Expression(Ires);
+	}
+	
 };
 
 Expression pow(const std::vector<Expression> & args) {
 
-	double result = 0;
+	double result = 0.0;
+	bool hasImag = false;
+	complex<double> Ires(0.0, 0.0);
 
 	if (nargs_equal(args, 2)) {
 		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
 			result = std::pow(args[0].head().asNumber(), args[1].head().asNumber());
+		}
+		else if ((args[0].isHeadComplex()) && (args[1].isHeadNumber()))
+		{
+			hasImag = true;
+			Ires = std::pow(args[0].head().asComplex(), args[1].head().asNumber());
+		}
+		else if ((args[0].isHeadNumber()) && (args[1].isHeadComplex()))
+		{
+			hasImag = true;
+			Ires = std::pow(args[0].head().asNumber(), args[1].head().asComplex());
+		}
+		else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex()))
+		{
+			hasImag = true;
+			Ires = std::pow(args[0].head().asComplex(), args[1].head().asComplex());
 		}
 		else {
 			throw SemanticError("Error in call to power: invalid argument.");
@@ -226,7 +260,14 @@ Expression pow(const std::vector<Expression> & args) {
 	else {
 		throw SemanticError("Error in call to power: invalid number of arguments.");
 	}
-	return Expression(result);
+	if (!hasImag)
+	{
+		return Expression(result);
+	}
+	else
+	{
+		return Expression(Ires);
+	}
 };
 
 Expression logn(const std::vector<Expression> & args) {
