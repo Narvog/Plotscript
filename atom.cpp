@@ -168,6 +168,20 @@ bool Atom::operator==(const Atom & right) const noexcept{
       return stringValue == right.stringValue;
     }
     break;
+  case ComplexKind:
+  {
+	  if (right.m_type != ComplexKind) return false;
+	  double dleftr = complexValue.real();
+	  double dlefti = complexValue.imag();
+	  double drightr = right.complexValue.real();
+	  double drighti = right.complexValue.imag();
+	  double diffr = fabs(dleftr - drightr);
+	  double diffi = fabs(dlefti - drighti);
+	  if (std::isnan(diffr) || (diffr > std::numeric_limits<double>::epsilon()) || std::isnan(diffi) || (diffi > std::numeric_limits<double>::epsilon()))
+	  {
+		  return false;
+	  }
+  }
   default:
     return false;
   }
