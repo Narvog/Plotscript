@@ -28,7 +28,7 @@ Expression default_proc(const std::vector<Expression> & args){
 
 Expression add(const std::vector<Expression> & args){
 
-  // check all aruments are numbers, while adding
+  // check all aruments are numbers, or complex, while adding
   double result = 0.0;
   bool hasImag = false;
   complex<double> Ires(0.0, 0.0);
@@ -59,7 +59,7 @@ Expression add(const std::vector<Expression> & args){
 
 Expression mul(const std::vector<Expression> & args){
  
-  // check all aruments are numbers, while multiplying
+  // check all aruments are numbers, or complex, while multiplying
 	double result = 1.0;
 	bool hasImag = false;
 	complex<double> Ires(1.0, 0.0);
@@ -88,7 +88,8 @@ Expression mul(const std::vector<Expression> & args){
 };
 
 Expression subneg(const std::vector<Expression> & args){
-
+	//returns a number, or complex, * -1 if one argument is given
+	//else return argument[0] - argument[1] for any combinmation of numbers or complex numbers
   double result = 0.0;
   bool hasImag = false;
   complex<double> Ires(0.0,0.0);
@@ -106,6 +107,7 @@ Expression subneg(const std::vector<Expression> & args){
       throw SemanticError("Error in call to negate: invalid argument.");
     }
   }
+  //performs subtraction for any combination of numbers and complex numbers
   else if(nargs_equal(args,2)){
     if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
       Ires = args[0].head().asNumber() - args[1].head().asNumber();
@@ -145,7 +147,8 @@ Expression subneg(const std::vector<Expression> & args){
 };
 
 Expression div(const std::vector<Expression> & args){
-
+	//performs division for any combnation of complex numbers and numbers
+	//at least two numbers/complex are requred or an error is thown
 	double result = 0.0;
 	bool hasImag = false;
 	complex<double> Ires(0.0, 0.0);
@@ -188,7 +191,7 @@ Expression div(const std::vector<Expression> & args){
 };
 
 Expression sq(const std::vector<Expression> & args) {
-
+	//performs sqrt on numbers and complex values. returns a complex value if the input is complex or neagtive
 	double result = 0;
 	complex<double> Ires(0.0, 0.0);
 	complex<double> temp(0.0, 0.0);
@@ -229,7 +232,8 @@ Expression sq(const std::vector<Expression> & args) {
 };
 
 Expression pow(const std::vector<Expression> & args) {
-
+	//perfroms the power function on complex or real numbers as either argument returns complex if a complexnumber is
+	//used in either slot
 	double result = 0.0;
 	bool hasImag = false;
 	complex<double> Ires(0.0, 0.0);
@@ -271,7 +275,9 @@ Expression pow(const std::vector<Expression> & args) {
 };
 
 Expression logn(const std::vector<Expression> & args) {
-
+	//performs the ln operation in real numbers
+	//thows an error in ln is called on 0 or a negative number
+	//can't be called on a complex value
 	double result = 0;
 
 	if (nargs_equal(args, 1)) {
@@ -299,7 +305,7 @@ Expression logn(const std::vector<Expression> & args) {
 };
 
 Expression sn(const std::vector<Expression> & args) {
-
+	//performs sin on numbers. Treats the number argument as radians.
 	double result = 0;
 
 	if (nargs_equal(args, 1)) {
@@ -317,7 +323,7 @@ Expression sn(const std::vector<Expression> & args) {
 };
 
 Expression cn(const std::vector<Expression> & args) {
-
+	//performs cos on numbers. Treats the number argument as radians.
 	double result = 0;
 
 	if (nargs_equal(args, 1)) {
@@ -335,7 +341,7 @@ Expression cn(const std::vector<Expression> & args) {
 };
 
 Expression tn(const std::vector<Expression> & args) {
-
+	//performs tan on numbers. Treats the number argument as radians.
 	double result = 0;
 
 	if (nargs_equal(args, 1)) {
@@ -353,7 +359,8 @@ Expression tn(const std::vector<Expression> & args) {
 };
 
 Expression IMreal(const std::vector<Expression> & args) {
-
+	//returns the real component of a complex number. throws an error if called on more than one number.
+	//also throws an error if called on a non-complex number
 	double result = 0;
 
 	if (nargs_equal(args, 1)) {
@@ -371,7 +378,8 @@ Expression IMreal(const std::vector<Expression> & args) {
 };
 
 Expression IMimag(const std::vector<Expression> & args) {
-
+	//returns the imaginary component of a complex number. throws an error if called on more than one number.
+	//also throws an error if called on a non-complex number
 	double result = 0;
 
 	if (nargs_equal(args, 1)) {
@@ -389,7 +397,8 @@ Expression IMimag(const std::vector<Expression> & args) {
 };
 
 Expression IMmag(const std::vector<Expression> & args) {
-
+	//returns the magnitude of a complex number. throws an error if called on more than one number.
+	//also throws an error if called on a non-complex number
 	double result = 0;
 
 	if (nargs_equal(args, 1)) {
@@ -407,7 +416,8 @@ Expression IMmag(const std::vector<Expression> & args) {
 };
 
 Expression IMarg(const std::vector<Expression> & args) {
-
+	//returns the angle of a complex number. throws an error if called on more than one number.
+	//also throws an error if called on a non-complex number
 	double result = 0;
 
 	if (nargs_equal(args, 1)) {
@@ -425,7 +435,8 @@ Expression IMarg(const std::vector<Expression> & args) {
 };
 
 Expression IMconj(const std::vector<Expression> & args) {
-
+	//returns the conjugate of a complex number. throws an error if called on more than one number.
+	//also throws an error if called on a non-complex number
 	complex<double> Ires;
 
 	if (nargs_equal(args, 1)) {
@@ -442,9 +453,9 @@ Expression IMconj(const std::vector<Expression> & args) {
 	return Expression(Ires);
 };
 
+//Variables set up for pi, e, and I
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
-
 const complex<double> IMI(0.0, 1.0);
 
 Environment::Environment(){

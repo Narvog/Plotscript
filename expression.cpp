@@ -199,6 +199,7 @@ Expression Expression::eval(Environment & env){
 
 
 std::ostream & operator<<(std::ostream & out, const Expression & exp){
+	//added the if statement to allow for the proper outputing of complex numbers
 	if (!exp.isHeadComplex())
 	{
 		out << "(";
@@ -208,7 +209,7 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
   for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
     out << *e;
   }
-
+  //added the if statement to allow for the proper outputing of complex numbers
   if (!exp.isHeadComplex())
   {
 	  out << ")";

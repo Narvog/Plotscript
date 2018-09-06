@@ -41,6 +41,7 @@ Atom::Atom(const std::string & value): Atom() {
   setSymbol(value);
 }
 
+//complex added to the copy constructor
 Atom::Atom(const Atom & x): Atom(){
   if(x.isNumber()){
     setNumber(x.numberValue);
@@ -53,6 +54,7 @@ Atom::Atom(const Atom & x): Atom(){
   }
 }
 
+//complex added to the assignment opperator
 Atom & Atom::operator=(const Atom & x){
 
   if(this != &x){
@@ -168,6 +170,7 @@ bool Atom::operator==(const Atom & right) const noexcept{
       return stringValue == right.stringValue;
     }
     break;
+	//added the case for ComplexKind
   case ComplexKind:
   {
 	  if (right.m_type != ComplexKind) return false;
@@ -203,6 +206,7 @@ std::ostream & operator<<(std::ostream & out, const Atom & a){
   if(a.isSymbol()){
     out << a.asSymbol();
   }
+  //added the case for complex
   if (a.isComplex()) {
 	  out << a.asComplex();
   }
