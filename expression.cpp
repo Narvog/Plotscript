@@ -18,6 +18,7 @@ Expression::Expression(const Expression & a){
 
   m_head = a.m_head;
   isList = a.isList;
+  islambda = a.islambda;
   for(auto e : a.m_tail){
     m_tail.push_back(e);
   }
@@ -29,6 +30,7 @@ Expression & Expression::operator=(const Expression & a){
   if(this != &a){
     m_head = a.m_head;
 	isList = a.isList;
+	islambda = a.islambda;
     m_tail.clear();
     for(auto e : a.m_tail){
       m_tail.push_back(e);
@@ -74,6 +76,15 @@ bool Expression::isLList() const noexcept {
 void Expression::setLList(bool set)
 {
 	isList = set;
+}
+
+bool Expression::isLLambda() const noexcept {
+	return islambda;
+}
+
+void Expression::setLLambda(bool set)
+{
+	islambda = set;
 }
 
 
@@ -176,17 +187,42 @@ Expression Expression::handle_define(Environment & env){
   if(env.is_proc(m_head)){
     throw SemanticError("Error during evaluation: attempt to redefine a built-in procedure");
   }
-	
+  //if (env.is_lambda(m_head)) {
+	//  throw SemanticError("Error during evaluation: attempt to redefine a lambda procedure");
+  //}
+
   // eval tail[1]
   Expression result = m_tail[1].eval(env);
-
-  if(env.is_exp(m_head)){
-    throw SemanticError("Error during evaluation: attempt to redefine a previously defined symbol");
+  if (result.isLLambda())
+  {
+	  islambda = true;
   }
-    
+  if (result.islambdaexp)
+  {
+	  islambdaexp = true;
+  }
+
   //and add to env
-  env.add_exp(m_tail[0].head(), result);
-  
+  if (!islambda)
+  {
+	  if (!islambdaexp)
+	  {
+		  //throw SemanticError("also incorrect");
+		  if (env.is_exp(m_head)) {
+			  throw SemanticError("Error during evaluation: attempt to redefine a previously defined symbol");
+		  }
+		  env.add_exp(m_tail[0].head(), result);
+	  }
+	  else
+	  {
+		  //env.add_lambda_exp(m_tail[0].head(), result);
+	  }
+  }
+  else
+  {
+	 // env.add_lambda(m_tail[0].head(), result);
+  }
+
   return result;
 }
 
@@ -209,6 +245,45 @@ Expression Expression::handle_list(Environment & env)
 	return result;
 }
 
+
+Expression Expression::handle_lambda(Environment & env)
+{
+	if (m_tail.size() == 0)
+	{
+		throw SemanticError("Error during evaluation: zero arguments to lambda");
+	}
+	Expression s1;
+	Expression s2;
+	//lists
+	Expression result;
+	Expression arguments;
+	Expression procedure;
+	std::size_t length = m_tail.size();
+	if (length == 2)
+	{
+		s1 = m_tail[0];
+		s2 = m_tail[1];
+		std::size_t s1Length = s1.m_tail.size();
+		std::size_t s2Length = s2.m_tail.size();
+		arguments.rTail().push_back(s1.m_head);
+		for (std::size_t i = 0; i < s1Length; i++)
+		{
+			arguments.rTail().push_back(s1.m_tail[i]);
+		}
+
+		procedure = s2;
+		arguments.setLList(true);
+		result.rTail().push_back(arguments);
+		result.rTail().push_back(procedure);
+	}
+	else
+	{
+		throw SemanticError("Error during evaluation: incorrect amout of arguments to lambda");
+	}
+	result.islambda = true;
+	return result;
+}
+
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
@@ -227,6 +302,10 @@ Expression Expression::eval(Environment & env){
   else if(m_head.isSymbol() && m_head.asSymbol() == "define"){
     return handle_define(env);
   }
+  else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
+	  islambda = true;
+	  return handle_lambda(env);
+  }
   // else attempt to treat as procedure
   else{ 
     std::vector<Expression> results;
@@ -244,6 +323,11 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
   out << exp.head();
   std::size_t tailL = exp.rTail().size();
   std::size_t i = 0;
+  if ((tailL != 0) && !exp.isLList() && !exp.isLLambda())
+  {
+	  out << " ";
+  }
+
   for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
 	  if (e->head().isSymbol() && e->head().asSymbol() == "")
 	  {
@@ -252,7 +336,7 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
 	  else
 	  {
 		  out << *e;
-		  if (i < tailL - 1)
+		  if ((i < tailL - 1))
 		  {
 			  out << " ";
 		  }

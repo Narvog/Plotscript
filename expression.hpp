@@ -74,6 +74,10 @@ public:
 
   void setLList(bool set);
 
+  bool isLLambda() const noexcept;
+
+  void setLLambda(bool set);
+
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment & env);
 
@@ -85,6 +89,8 @@ private:
   // the head of the expression
   Atom m_head;
   bool isList = false;
+  bool islambda = false;
+  bool islambdaexp = false;
   // the tail list is expressed as a vector for access efficiency
   // and cache coherence, at the cost of wasted memory.
   std::vector<Expression> m_tail;
@@ -97,6 +103,10 @@ private:
   Expression handle_define(Environment & env);
   Expression handle_begin(Environment & env);
   Expression handle_list(Environment & env);
+
+  Expression handle_lambda(Environment & env);
+  //Expression handle_lambda_lookup(const Atom & head, Environment & env);
+
 };
 
 /// Render expression to output stream
