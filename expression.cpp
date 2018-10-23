@@ -1,6 +1,7 @@
 #include "expression.hpp"
 
 #include <sstream>
+#include <string>
 #include <list>
 
 #include "environment.hpp"
@@ -314,7 +315,7 @@ Expression Expression::handle_lambda_lookup(const Atom & head, Environment & env
 	}
 	else
 	{
-		throw SemanticError("Error in call to lambda: invalid number of arguments.");
+		throw SemanticError("Error in call to procedure: invalid number of arguments.");
 	}
 	return result;
 }
@@ -335,9 +336,11 @@ Expression Expression::handle_apply(Environment & env)
 			{
 			result = expr.eval(env);
 			}
-			catch(SemanticError)
+			catch (SemanticError e)
 			{
-			throw SemanticError("error in function call of apply.");
+				std::string t = e.what();
+				std::string output = "Error: during apply: " + t;
+				throw SemanticError(output);
 			}
 		}
 		else
@@ -376,9 +379,11 @@ Expression Expression::handle_map(Environment & env)
 				{
 					 result1 = expr.eval(env);
 				}
-				catch (SemanticError)
+				catch (SemanticError e)
 				{
-					throw SemanticError("error in function call of map.");
+					std::string t = e.what();
+					std::string output = "Error: during map: " + t;
+					throw SemanticError(output);
 				}
 				resultf.append(result1.head());
 				resultf.setLList(true);
