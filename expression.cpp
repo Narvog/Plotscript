@@ -17,6 +17,7 @@ Expression::Expression(const Atom & a){
 Expression::Expression(const Expression & a){
 
   m_head = a.m_head;
+  isList = a.isList;
   for(auto e : a.m_tail){
     m_tail.push_back(e);
   }
@@ -27,6 +28,7 @@ Expression & Expression::operator=(const Expression & a){
   // prevent self-assignment
   if(this != &a){
     m_head = a.m_head;
+	isList = a.isList;
     m_tail.clear();
     for(auto e : a.m_tail){
       m_tail.push_back(e);
@@ -45,6 +47,14 @@ const Atom & Expression::head() const{
   return m_head;
 }
 
+std::vector<Expression> & Expression::rTail() {
+	return m_tail;
+}
+
+const std::vector<Expression> & Expression::rTail() const {
+	return m_tail;
+}
+
 bool Expression::isHeadNumber() const noexcept{
   return m_head.isNumber();
 }
@@ -55,6 +65,15 @@ bool Expression::isHeadSymbol() const noexcept{
 
 bool Expression::isHeadComplex() const noexcept {
 	return m_head.isComplex();
+}
+
+bool Expression::isLList() const noexcept {
+	return isList;
+}
+
+void Expression::setLList(bool set)
+{
+	isList = set;
 }
 
 
@@ -171,12 +190,33 @@ Expression Expression::handle_define(Environment & env){
   return result;
 }
 
+
+Expression Expression::handle_list(Environment & env)
+{
+	Expression result;
+	result.isList = true;
+	if (m_tail.empty())
+	{
+		result.m_tail.push_back(Atom(""));
+
+	}
+	else
+	{
+		for (Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it) {
+			result.m_tail.push_back(it->eval(env));
+		}
+	}
+	return result;
+}
+
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
 Expression Expression::eval(Environment & env){
-  
-  if(m_tail.empty()){
+  if (m_head.isSymbol() && m_head.asSymbol() == "list") {
+	  return handle_list(env);
+  }
+  else if(m_tail.empty()){
     return handle_lookup(m_head, env);
   }
   // handle begin special-form
@@ -200,20 +240,27 @@ Expression Expression::eval(Environment & env){
 
 std::ostream & operator<<(std::ostream & out, const Expression & exp){
 	//added the if statement to allow for the proper outputing of complex numbers
-	if (!exp.isHeadComplex())
-	{
 		out << "(";
-	}
   out << exp.head();
-  
+  std::size_t tailL = exp.rTail().size();
+  std::size_t i = 0;
   for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
-    out << *e;
+	  if (e->head().isSymbol() && e->head().asSymbol() == "")
+	  {
+
+	  }
+	  else
+	  {
+		  out << *e;
+		  if (i < tailL - 1)
+		  {
+			  out << " ";
+		  }
+		  i++;
+	  }
   }
   //added the if statement to allow for the proper outputing of complex numbers
-  if (!exp.isHeadComplex())
-  {
-	  out << ")";
-  }
+		  out << ")";
 
   return out;
 }

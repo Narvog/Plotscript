@@ -453,6 +453,71 @@ Expression IMconj(const std::vector<Expression> & args) {
 	return Expression(Ires);
 };
 
+Expression Lfirst(const std::vector<Expression> & args) {
+	Expression result;
+	if (nargs_equal(args, 1))
+	{
+		if (args[0].isLList())
+		{
+			if (!args[0].rTail()[0].head().isSymbol())
+			{
+				result = args[0].rTail()[0];
+			}
+			else
+			{
+				throw SemanticError("Error: argument to first is an empty list");
+			}
+			
+		}
+		else
+		{
+			throw SemanticError("Error: argument to first is not a list");
+		}
+	}
+	else
+	{
+		throw SemanticError("Error: more than one argument in call to first");
+	}
+	return result;
+};
+
+Expression Lrest(const std::vector<Expression> & args) {
+	Expression result;
+	if (nargs_equal(args, 1))
+	{
+		if (args[0].isLList())
+		{
+			if (!args[0].rTail()[0].head().isSymbol())
+			{
+				result.setLList(true);
+				std::size_t listL = args[0].rTail().size();
+				for (std::size_t i = 1; i < listL; i++)
+				{
+					result.rTail().push_back(args[0].rTail()[i]);
+				}
+				if (listL == 1)
+				{
+					result.rTail().push_back(Atom(""));
+				}
+			}
+			else
+			{
+				throw SemanticError("Error: argument to rest is an empty list");
+			}
+			
+		}
+		else
+		{
+			throw SemanticError("Error: argument to rest is not a list");
+		}
+	}
+	else
+	{
+		throw SemanticError("Error: more than one argument in call to rest");
+	}
+	return result;
+};
+
 //Variables set up for pi, e, and I
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
@@ -586,4 +651,10 @@ void Environment::reset(){
 
   // Procedure: conj;
   envmap.emplace("conj", EnvResult(ProcedureType, IMconj));
+
+  // Procedure: first;
+  envmap.emplace("first", EnvResult(ProcedureType, Lfirst));
+
+  // Procedure: rest;
+  envmap.emplace("rest", EnvResult(ProcedureType, Lrest));
 }
