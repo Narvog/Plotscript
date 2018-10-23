@@ -445,7 +445,11 @@ Expression Expression::eval(Environment & env){
 
 std::ostream & operator<<(std::ostream & out, const Expression & exp){
 	//added the if statement to allow for the proper outputing of complex numbers
+	if (!exp.head().isComplex())
+	{
 		out << "(";
+	}
+		
   out << exp.head();
   std::size_t tailL = exp.rTail().size();
   std::size_t i = 0;
@@ -470,7 +474,10 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
 	  }
   }
   //added the if statement to allow for the proper outputing of complex numbers
-		  out << ")";
+  if (!exp.head().isComplex())
+  {
+	  out << "(";
+  }
 
   return out;
 }

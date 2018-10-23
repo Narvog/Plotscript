@@ -208,7 +208,7 @@ std::ostream & operator<<(std::ostream & out, const Atom & a){
   }
   //added the case for complex
   if (a.isComplex()) {
-	  out << "\b" << a.asComplex() << "\b";
+	  out << a.asComplex();
   }
 
   return out;

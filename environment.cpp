@@ -574,6 +574,7 @@ Expression Lappend(const std::vector<Expression> & args) {
 				result.rTail().push_back(args[0].rTail()[i]);
 			}
 			result.rTail().push_back(args[1].head());
+			result.setLList(true);
 		}
 		else
 		{
@@ -635,6 +636,7 @@ Expression Lrange(const std::vector<Expression> & args) {
 						result.rTail().push_back(Expression(num));
 						num += args[2].head().asNumber();
 					}
+					result.setLList(true);
 				}
 				else
 				{
