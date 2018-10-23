@@ -518,6 +518,91 @@ Expression Lrest(const std::vector<Expression> & args) {
 	return result;
 };
 
+Expression Llength(const std::vector<Expression> & args) {
+	double result = 0.0;
+	if (nargs_equal(args, 1))
+	{
+		if (args[0].isLList())
+		{
+			if (!args[0].rTail()[0].isHeadSymbol())
+			{
+				result = args[0].rTail().size();
+			}
+			else
+			{
+				result = 0.0;
+			}
+		}
+		else
+		{
+			throw SemanticError("Error: argument to length is not a list");
+		}
+	}
+	else
+	{
+		throw SemanticError("Error: more than one argument in call to length");
+	}
+	return Expression(result);
+};
+
+Expression Lappend(const std::vector<Expression> & args) {
+	Expression result;
+	if (nargs_equal(args, 2))
+	{
+		if (args[0].isLList())
+		{
+			std::size_t length = args[0].rTail().size();
+			std::size_t i;
+			for (i = 0; i < length; i++)
+			{
+				result.rTail().push_back(args[0].rTail()[i]);
+			}
+			result.rTail().push_back(args[1].head());
+		}
+		else
+		{
+			throw SemanticError("Error: first argument to append is not a list");
+		}
+	}
+	else
+	{
+		throw SemanticError("Error: more than two argument in call to length");
+	}
+	return result;
+};
+
+Expression Ljoin(const std::vector<Expression> & args) {
+	Expression result;
+	if (nargs_equal(args, 2))
+	{
+		if (args[0].isLList() && args[1].isLList())
+		{
+			std::size_t length = args[0].rTail().size();
+			std::size_t i;
+			for (i = 0; i < length; i++)
+			{
+				result.rTail().push_back(args[0].rTail().at(i));
+			}
+			std::size_t length2 = args[1].rTail().size();
+			std::size_t j;
+			for (j = 0; j < length2; j++)
+			{
+				result.rTail().push_back(args[1].rTail().at(j));
+			}
+			result.setLList(true);
+		}
+		else
+		{
+			throw SemanticError("Error:  argument to join is not a list");
+		}
+	}
+	else
+	{
+		throw SemanticError("Error: more than two argument in call to join");
+	}
+	return result;
+};
+
 //Variables set up for pi, e, and I
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
@@ -657,4 +742,13 @@ void Environment::reset(){
 
   // Procedure: rest;
   envmap.emplace("rest", EnvResult(ProcedureType, Lrest));
+
+  // Procedure: length;
+  envmap.emplace("length", EnvResult(ProcedureType, Llength));
+
+  // Procedure: append;
+  envmap.emplace("append", EnvResult(ProcedureType, Lappend));
+
+  // Procedure: join;
+  envmap.emplace("join", EnvResult(ProcedureType, Ljoin));
 }
