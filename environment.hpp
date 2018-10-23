@@ -56,24 +56,31 @@ public:
    */
   bool is_exp(const Atom &sym) const;
 
+  bool is_lambda_exp(const Atom &sym) const;
+
   /*! Get the Expression the argument symbol maps to.
     \param sym the symbol to lookup
     \return the expression the symbol maps to or an Expression of NoneType
   */
   Expression get_exp(const Atom &sym) const;
 
+  Expression get_lambda_exp(const Atom &sym) const;
   /*! Add a mapping from sym argument to the exp argument within the environment.
     \param sym the symbol to add
     \param exp the expression the symbol should map to
    */
   void add_exp(const Atom &sym, const Expression &exp);
 
+  void add_lambda_exp(const Atom &sym, const Expression &exp);
+
+  void add_lambda(const Atom &sym, const Expression &exp);
+
   /*! Determine if a symbol has been defined as a procedure
     \param sym the symbol to lookup
     \return true if thr symbol maps to a procedure
    */
   bool is_proc(const Atom &sym) const;
-
+  bool is_lambda(const Atom &sym) const;
   /*! Get the Procedure the argument symbol maps to
     \param sym the symbol to lookup
     \return the procedure it maps to 
@@ -82,14 +89,14 @@ public:
           or does not map to a known procedure.
   */
   Procedure get_proc(const Atom &sym) const;
-
+  Expression get_lambda(const Atom &sym) const;
   /*! Reset the environment to its default state. */
   void reset();
 
 private:
   
   // Environment is a mapping from symbols to expressions or procedures
-  enum EnvResultType { ExpressionType, ProcedureType };
+  enum EnvResultType { ExpressionType, ProcedureType, LambdaType };
 
   struct EnvResult {
     EnvResultType type;
@@ -104,6 +111,7 @@ private:
 
   // the environment map
   std::map<std::string, EnvResult> envmap;
+  std::map<std::string, EnvResult> envmapLambda;
 };
 
 #endif

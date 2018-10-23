@@ -132,12 +132,17 @@ Expression apply(const Atom & op, const std::vector<Expression> & args, const En
 
 Expression Expression::handle_lookup(const Atom & head, const Environment & env){
     if(head.isSymbol()){ // if symbol is in env return value
-      if(env.is_exp(head)){
-	return env.get_exp(head);
-      }
-      else{
-	throw SemanticError("Error during evaluation: unknown symbol");
-      }
+		if (env.is_lambda_exp(head))
+		{
+			return env.get_lambda_exp(head);
+		}
+		else if (env.is_exp(head))
+		{
+			return env.get_exp(head);
+		}
+		else{
+		throw SemanticError("Error during evaluation: unknown symbol");
+		}
     }
     else if(head.isNumber()){
       return Expression(head);
@@ -215,12 +220,12 @@ Expression Expression::handle_define(Environment & env){
 	  }
 	  else
 	  {
-		  //env.add_lambda_exp(m_tail[0].head(), result);
+		  env.add_lambda_exp(m_tail[0].head(), result);
 	  }
   }
   else
   {
-	 // env.add_lambda(m_tail[0].head(), result);
+	 env.add_lambda(m_tail[0].head(), result);
   }
 
   return result;
@@ -284,12 +289,39 @@ Expression Expression::handle_lambda(Environment & env)
 	return result;
 }
 
+Expression Expression::handle_lambda_lookup(const Atom & head, Environment & env)
+{
+	Expression result;
+	Expression stage1 = env.get_lambda(head);
+
+	Expression arguments = stage1.m_tail[0];
+	Expression operations = stage1.m_tail[1];
+	result = operations;
+
+	std::size_t lengtharg = arguments.m_tail.size();
+	for (std::size_t i = 0; i < lengtharg; i++)
+	{
+		Expression args(Atom("define"));
+		args.append(arguments.m_tail[i].head());
+		Expression argi = m_tail[i].eval(env);
+		args.append(argi.head());
+		args.islambdaexp = true;
+		args.handle_define(env);
+	}
+	result = operations.eval(env);
+	return result;
+}
+
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
 Expression Expression::eval(Environment & env){
   if (m_head.isSymbol() && m_head.asSymbol() == "list") {
 	  return handle_list(env);
+  }
+  else if (m_tail.empty() && env.is_lambda(m_head)) {
+	  //fix this as errors are occuring
+	  return env.get_lambda(m_head.asSymbol());
   }
   else if(m_tail.empty()){
     return handle_lookup(m_head, env);
@@ -305,6 +337,10 @@ Expression Expression::eval(Environment & env){
   else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
 	  islambda = true;
 	  return handle_lambda(env);
+  }
+  else if (m_head.isSymbol() && env.is_lambda(m_head))
+  {
+	  return handle_lambda_lookup(m_head, env);
   }
   // else attempt to treat as procedure
   else{ 

@@ -693,6 +693,75 @@ void Environment::add_exp(const Atom & sym, const Expression & exp){
   envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp)); 
 }
 
+bool Environment::is_lambda_exp(const Atom & sym) const {
+	if (!sym.isSymbol()) return false;
+
+	auto result = envmapLambda.find(sym.asSymbol());
+	return (result != envmapLambda.end()) && (result->second.type == ExpressionType);
+}
+
+Expression Environment::get_lambda_exp(const Atom & sym) const {
+
+	Expression exp;
+
+	if (sym.isSymbol()) {
+		auto result = envmapLambda.find(sym.asSymbol());
+		if ((result != envmapLambda.end()) && (result->second.type == ExpressionType)) {
+			exp = result->second.exp;
+		}
+	}
+
+	return exp;
+}
+
+void Environment::add_lambda_exp(const Atom & sym, const Expression & exp) {
+
+	if (!sym.isSymbol()) {
+		throw SemanticError("Attempt to add non-symbol to environment");
+	}
+	if (envmapLambda.find(sym.asSymbol()) != envmapLambda.end()) {
+		envmapLambda.erase(sym.asSymbol());
+	}
+
+	envmapLambda.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));
+	int x = 1;
+}
+
+bool Environment::is_lambda(const Atom & sym) const {
+	if (!sym.isSymbol()) return false;
+
+	auto result = envmap.find(sym.asSymbol());
+	return (result != envmap.end()) && (result->second.type == LambdaType);
+}
+
+Expression Environment::get_lambda(const Atom & sym) const {
+
+	Expression exp;
+
+	if (sym.isSymbol()) {
+		auto result = envmap.find(sym.asSymbol());
+		if ((result != envmap.end()) && (result->second.type == LambdaType)) {
+			exp = result->second.exp;
+		}
+	}
+
+	return exp;
+}
+
+void Environment::add_lambda(const Atom & sym, const Expression & exp) {
+
+	if (!sym.isSymbol()) {
+		throw SemanticError("Attempt to add non-symbol to environment");
+	}
+
+	// error if overwriting symbol map
+	if (envmap.find(sym.asSymbol()) != envmap.end()) {
+		throw SemanticError("Attempt to overwrite symbol in environemnt");
+	}
+
+	envmap.emplace(sym.asSymbol(), EnvResult(LambdaType, exp));
+}
+
 bool Environment::is_proc(const Atom & sym) const{
   if(!sym.isSymbol()) return false;
   
@@ -721,6 +790,7 @@ then re-add the default ones.
 void Environment::reset(){
 
   envmap.clear();
+  envmapLambda.clear();
   
   // Built-In value of pi
   envmap.emplace("pi", EnvResult(ExpressionType, Expression(PI)));

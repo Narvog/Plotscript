@@ -105,6 +105,7 @@ private:
   Expression handle_list(Environment & env);
 
   Expression handle_lambda(Environment & env);
+  Expression handle_lambda_lookup(const Atom & head, Environment & env);
   //Expression handle_lambda_lookup(const Atom & head, Environment & env);
 
 };
