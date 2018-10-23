@@ -476,7 +476,7 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
   //added the if statement to allow for the proper outputing of complex numbers
   if (!exp.head().isComplex())
   {
-	  out << "(";
+	  out << ")";
   }
 
   return out;
