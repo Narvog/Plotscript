@@ -742,7 +742,6 @@ void Environment::add_lambda_exp(const Atom & sym, const Expression & exp) {
 	}
 
 	envmapLambda.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));
-	int x = 1;
 }
 
 bool Environment::is_lambda(const Atom & sym) const {
