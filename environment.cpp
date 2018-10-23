@@ -603,6 +603,45 @@ Expression Ljoin(const std::vector<Expression> & args) {
 	return result;
 };
 
+Expression Lrange(const std::vector<Expression> & args) {
+	Expression result;
+	if (nargs_equal(args, 3))
+	{
+		if (args[0].head().isNumber() && args[1].head().isNumber() && args[2].head().isNumber())
+		{
+			if (args[0].head().asNumber() < args[1].head().asNumber())
+			{
+				if (args[2].head().asNumber() > 0.0)
+				{
+					double num = args[0].head().asNumber();
+					while (num <= args[1].head().asNumber()) //change base upon behavior of (range 3 3 1)/ ect.
+					{
+						result.rTail().push_back(Expression(num));
+						num += args[2].head().asNumber();
+					}
+				}
+				else
+				{
+					throw SemanticError("Error: negative or zero increment in range");
+				}
+			}
+			else
+			{
+				throw SemanticError("Error: begin greater than end in range");
+			}
+		}
+		else
+		{
+			throw SemanticError("Error: non-number argument is called with range");
+		}
+	}
+	else
+	{
+		throw SemanticError("Error: either more than, or less than three argument in call to ");
+	}
+	return result;
+};
+
 //Variables set up for pi, e, and I
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
@@ -751,4 +790,7 @@ void Environment::reset(){
 
   // Procedure: join;
   envmap.emplace("join", EnvResult(ProcedureType, Ljoin));
+
+  // Procedure: range;
+  envmap.emplace("range", EnvResult(ProcedureType, Lrange));
 }
