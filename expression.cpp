@@ -299,17 +299,101 @@ Expression Expression::handle_lambda_lookup(const Atom & head, Environment & env
 	result = operations;
 
 	std::size_t lengtharg = arguments.m_tail.size();
-	for (std::size_t i = 0; i < lengtharg; i++)
+	if (m_tail.size() == lengtharg)
 	{
-		Expression args(Atom("define"));
-		args.append(arguments.m_tail[i].head());
-		Expression argi = m_tail[i].eval(env);
-		args.append(argi.head());
-		args.islambdaexp = true;
-		args.handle_define(env);
+		for (std::size_t i = 0; i < lengtharg; i++)
+		{
+			Expression args(Atom("define"));
+			args.append(arguments.m_tail[i].head());
+			Expression argi = m_tail[i].eval(env);
+			args.append(argi.head());
+			args.islambdaexp = true;
+			args.handle_define(env);
+		}
+		result = operations.eval(env);
 	}
-	result = operations.eval(env);
+	else
+	{
+		throw SemanticError("Error in call to lambda: invalid number of arguments.");
+	}
 	return result;
+}
+
+Expression Expression::handle_apply(Environment & env)
+{
+	//check the head/tail for relevent vars
+	Expression result;
+
+	if ((env.is_proc(m_tail[0].head()) || env.is_lambda(m_tail[0].head())) && (m_tail[0].m_tail.empty()))
+	{
+		Expression list = m_tail[1].eval(env);
+		if (list.isLList())
+		{
+			Expression expr(m_tail[0].head());
+			expr.m_tail = list.m_tail;
+			try
+			{
+			result = expr.eval(env);
+			}
+			catch(SemanticError)
+			{
+			throw SemanticError("error in function call of apply.");
+			}
+		}
+		else
+		{
+			throw SemanticError("Error: second argument to apply not a list");
+		}
+	}
+	else
+	{
+		throw SemanticError("Error: first argument to apply not a procedure");
+	}
+	return result;
+}
+
+Expression Expression::handle_map(Environment & env)
+{
+	//check the head/tail for relevent vars
+	Expression resultf;
+
+	if ((env.is_proc(m_tail[0].head()) || env.is_lambda(m_tail[0].head())) && (m_tail[0].m_tail.empty()))
+	{
+		Expression list = m_tail[1].eval(env);
+		if (list.isLList())
+		{
+
+			
+			std::size_t listL = list.m_tail.size();
+			for (std::size_t i = 0; i < listL; i++)
+			{
+				Expression expr(m_tail[0].head());
+				Expression result1;
+				Expression temp = list.m_tail[i].eval(env);
+
+				expr.append(temp.head());
+				try
+				{
+					 result1 = expr.eval(env);
+				}
+				catch (SemanticError)
+				{
+					throw SemanticError("error in function call of map.");
+				}
+				resultf.append(result1.head());
+				resultf.setLList(true);
+			}
+		}
+		else
+		{
+			throw SemanticError("Error: second argument to map not a list");
+		}
+	}
+	else
+	{
+		throw SemanticError("Error: first argument to map not a procedure");
+	}
+	return resultf;
 }
 
 // this is a simple recursive version. the iterative version is more
@@ -333,6 +417,12 @@ Expression Expression::eval(Environment & env){
   // handle define special-form
   else if(m_head.isSymbol() && m_head.asSymbol() == "define"){
     return handle_define(env);
+  }
+  else if (m_head.isSymbol() && m_head.asSymbol() == "apply") {
+	  return handle_apply(env);
+  }
+  else if (m_head.isSymbol() && m_head.asSymbol() == "map") {
+	  return handle_map(env);
   }
   else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
 	  islambda = true;

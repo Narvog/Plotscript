@@ -177,6 +177,22 @@ Expression div(const std::vector<Expression> & args){
       throw SemanticError("Error in call to division: invalid argument.");
     }
   }
+  else if (nargs_equal(args, 1))
+  {
+	  if (args[0].isHeadNumber())
+	  {
+		  result = 1.0 / args[0].head().asNumber();
+	  }
+	  else if (args[0].isHeadComplex())
+	  {
+		  hasImag = true;
+		  Ires = 1.0 / args[0].head().asComplex();
+	  }
+	  else
+	  {
+		  throw SemanticError("Error in call to division: invalid argument.");
+	  }
+  }
   else{
     throw SemanticError("Error in call to division: invalid number of arguments.");
   }
