@@ -151,6 +151,10 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 	else if (head.isComplex()) {
 		return Expression(head);
 	}
+	else if (head.isString())
+	{
+		return Expression(head);
+	}
     else{
       throw SemanticError("Error during evaluation: Invalid type in terminal expression");
     }

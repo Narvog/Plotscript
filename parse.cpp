@@ -27,7 +27,6 @@ Expression parse(const TokenSequenceType &tokens) noexcept {
   // cannot parse empty
   if (tokens.empty())
     return Expression();
-
   bool athead = false;
 
   // stack tracks the last node created
@@ -37,9 +36,12 @@ Expression parse(const TokenSequenceType &tokens) noexcept {
 
   for (auto &t : tokens) {
 
-    if (t.type() == Token::OPEN) {
+	 if (t.type() == Token::OPEN)
+	{
       athead = true;
-    } else if (t.type() == Token::CLOSE) {
+    } 
+	else if (t.type() == Token::CLOSE)
+	{
       if (stack.empty()) {
         return Expression();
       }
@@ -49,8 +51,14 @@ Expression parse(const TokenSequenceType &tokens) noexcept {
         num_tokens_seen += 1;
         break;
       }
-    } else {
-
+    } 
+	else if (t.type() == Token::STRINGQs) 
+	{
+	}
+	else if (t.type() == Token::STRINGQe)
+	{
+	}
+	else {
       if (athead) {
         if (stack.empty()) {
           if (!setHead(ast, t)) {

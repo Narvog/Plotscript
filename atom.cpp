@@ -28,10 +28,18 @@ Atom::Atom(const Token & token): Atom(){
       setNumber(temp);
     }
   }
+
   else{ // else assume symbol
     // make sure does not start with number
     if(!std::isdigit(token.asString()[0])){
-      setSymbol(token.asString());
+		if (!token.getisStringL())
+		{
+			setSymbol(token.asString());
+		}
+		else
+		{
+			setString(token.asString());
+		}
     }
   }
 }
@@ -52,6 +60,9 @@ Atom::Atom(const Atom & x): Atom(){
   else if (x.isComplex()) {
 	setComplex(x.complexValue);
   }
+  else if (x.m_type == StringKind) {
+	  setString(x.stringValue);
+  }
 }
 
 //complex added to the assignment opperator
@@ -70,6 +81,9 @@ Atom & Atom::operator=(const Atom & x){
 	else if (x.m_type == ComplexKind) {
 		setComplex(x.complexValue);
 	}
+	else if (x.m_type == StringKind) {
+		setString(x.stringValue);
+	}
   }
   return *this;
 }
@@ -79,6 +93,9 @@ Atom::~Atom(){
   // we need to ensure the destructor of the symbol string is called
   if(m_type == SymbolKind){
     stringValue.~basic_string();
+  }
+  else if (m_type == StringKind) {
+	  stringLValue.~basic_string();
   }
 }
 
@@ -96,6 +113,10 @@ bool Atom::isSymbol() const noexcept{
 
 bool Atom::isComplex() const noexcept {
 	return m_type == ComplexKind;
+}
+
+bool Atom::isString() const noexcept {
+	return m_type == StringKind;
 }
 
 
@@ -123,6 +144,19 @@ void Atom::setComplex(const complex<double> value) {
 	complexValue = value;
 }
 
+void Atom::setString(const std::string & value) {
+
+	// we need to ensure the destructor of the symbol string is called
+	if (m_type == StringKind) {
+		stringLValue.~basic_string();
+	}
+
+	m_type = StringKind;
+
+	// copy construct in place
+	new (&stringLValue) std::string(value);
+}
+
 double Atom::asNumber() const noexcept{
 
   return (m_type == NumberKind) ? numberValue : 0.0;  
@@ -143,6 +177,17 @@ std::string Atom::asSymbol() const noexcept{
 complex<double> Atom::asComplex() const noexcept {
 
 	return (m_type == ComplexKind) ? complexValue : complex<double> (0.0, 0.0);
+}
+
+std::string Atom::asString() const noexcept {
+
+	std::string result;
+
+	if (m_type == StringKind) {
+		result = stringLValue;
+	}
+
+	return result;
 }
 
 bool Atom::operator==(const Atom & right) const noexcept{
@@ -185,6 +230,13 @@ bool Atom::operator==(const Atom & right) const noexcept{
 		  return false;
 	  }
   }
+  case StringKind:
+  {
+	  if (right.m_type != StringKind) return false;
+
+	  return stringLValue == right.stringLValue;
+  }
+  break;
   default:
     return false;
   }
@@ -209,6 +261,9 @@ std::ostream & operator<<(std::ostream & out, const Atom & a){
   //added the case for complex
   if (a.isComplex()) {
 	  out << a.asComplex();
+  }
+  if (a.isString()) {
+	  out << a.asString();
   }
 
   return out;

@@ -20,7 +20,9 @@ public:
    */
   enum TokenType { OPEN,  //< open tag, aka '('
 		   CLOSE, //< close tag, aka ')'
-		   STRING //< string tag
+		   STRING, //< string tag
+		   STRINGQs, //< quote char '"'
+		   STRINGQe //< quote char '"'
   };
 
   /// construct a token of type t (if string default to empty value)
@@ -29,13 +31,20 @@ public:
   /// contruct a token of type String with value
   Token(const std::string & str);
 
+  /// contruct a token copy constructor
+  Token(const Token & Tok);
+
   /// return the type of the token
   TokenType type() const;
 
   /// return the token rendered as a string
   std::string asString() const;
 
+  void setisStringL(bool Q);
+  bool getisStringL() const;
+
 private:
+  bool isStringL;
   TokenType m_type;
   std::string value;
 };

@@ -52,11 +52,15 @@ public:
   ///predicate to determine if an Atom is of type Complex
   bool isComplex() const noexcept;
 
+  bool isString() const noexcept;
+
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
 
   /// value of Atom as a number, returns empty-string if not a Symbol
   std::string asSymbol() const noexcept;
+
+  std::string asString() const noexcept;
 
   ///value of Atom as a number, returns 0,0 if not a Complex
   complex<double> asComplex() const noexcept;
@@ -67,7 +71,7 @@ public:
 private:
 
   // internal enum of known types
-  enum Type {NoneKind, NumberKind, SymbolKind, ComplexKind};
+  enum Type {NoneKind, NumberKind, SymbolKind, ComplexKind, StringKind};
 
   // track the type
   Type m_type;
@@ -77,6 +81,7 @@ private:
   union {
     double numberValue;
     std::string stringValue;
+	std::string stringLValue;
 	complex<double> complexValue;
   };
 
@@ -88,6 +93,9 @@ private:
 
   //helper to set the type and value of a Complex
   void setComplex(const complex<double> value);
+
+  void setString(const std::string & value);
+
 };
 
 /// inequality comparison for Atom
