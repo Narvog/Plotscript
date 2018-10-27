@@ -9,7 +9,6 @@
 #include "expression.hpp"
 #include "environment.hpp"
 #include "semantic_error.hpp"
-
 bool Interpreter::parseStream(std::istream & expression) noexcept{
 
   TokenSequenceType tokens = tokenize(expression);

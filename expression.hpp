@@ -84,6 +84,8 @@ public:
   /// equality comparison for two expressions (recursive)
   bool operator==(const Expression & exp) const noexcept;
   
+  bool inLambda = false;
+  void helperinL(Expression & oper);
 private:
 
   // the head of the expression

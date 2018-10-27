@@ -20,6 +20,7 @@ Expression::Expression(const Expression & a){
   m_head = a.m_head;
   isList = a.isList;
   islambda = a.islambda;
+  inLambda = a.inLambda;
   for(auto e : a.m_tail){
     m_tail.push_back(e);
   }
@@ -32,6 +33,7 @@ Expression & Expression::operator=(const Expression & a){
     m_head = a.m_head;
 	isList = a.isList;
 	islambda = a.islambda;
+	inLambda = a.inLambda;
     m_tail.clear();
     for(auto e : a.m_tail){
       m_tail.push_back(e);
@@ -197,9 +199,9 @@ Expression Expression::handle_define(Environment & env){
   if(env.is_proc(m_head)){
     throw SemanticError("Error during evaluation: attempt to redefine a built-in procedure");
   }
-  //if (env.is_lambda(m_head)) {
-	//  throw SemanticError("Error during evaluation: attempt to redefine a lambda procedure");
-  //}
+  if (env.is_lambda(m_head)) {
+	  throw SemanticError("Error during evaluation: attempt to redefine a lambda procedure");
+  }
 
   // eval tail[1]
   Expression result = m_tail[1].eval(env);
@@ -221,7 +223,15 @@ Expression Expression::handle_define(Environment & env){
 		  if (env.is_exp(m_head)) {
 			  throw SemanticError("Error during evaluation: attempt to redefine a previously defined symbol");
 		  }
-		  env.add_exp(m_tail[0].head(), result);
+		  if (!inLambda)
+		  {
+			  env.add_exp(m_tail[0].head(), result);
+		  }
+		  else
+		  {
+			  env.add_lambda_exp(m_tail[0].head(), result);
+		  }
+		  
 	  }
 	  else
 	  {
@@ -280,7 +290,6 @@ Expression Expression::handle_lambda(Environment & env)
 		{
 			arguments.rTail().push_back(s1.m_tail[i]);
 		}
-
 		procedure = s2;
 		arguments.setLList(true);
 		result.rTail().push_back(arguments);
@@ -311,10 +320,11 @@ Expression Expression::handle_lambda_lookup(const Atom & head, Environment & env
 			Expression args(Atom("define"));
 			args.append(arguments.m_tail[i].head());
 			Expression argi = m_tail[i].eval(env);
-			args.append(argi.head());
+			args.rTail().emplace_back(argi);
 			args.islambdaexp = true;
 			args.handle_define(env);
 		}
+		helperinL(operations);
 		result = operations.eval(env);
 	}
 	else
@@ -322,6 +332,15 @@ Expression Expression::handle_lambda_lookup(const Atom & head, Environment & env
 		throw SemanticError("Error in call to procedure: invalid number of arguments.");
 	}
 	return result;
+}
+
+void Expression::helperinL(Expression & oper)
+{
+	for (size_t i = 0; i < oper.rTail().size(); i++)
+	{
+		oper.rTail()[i].inLambda = true;
+		helperinL(oper.rTail()[i]);
+	}
 }
 
 Expression Expression::handle_apply(Environment & env)
@@ -505,7 +524,11 @@ Expression Expression::eval(Environment & env){
     for(Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it){
       results.push_back(it->eval(env));
     }
-    return apply(m_head, results, env);
+	if (!isList)
+	{
+		return apply(m_head, results, env);
+	}
+	return *this;
   }
 }
 

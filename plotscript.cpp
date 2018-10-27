@@ -5,6 +5,9 @@
 
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
+#include "startup_config.hpp"
+
+
 
 void prompt(){
   std::cout << "\nplotscript> ";
@@ -28,6 +31,9 @@ void info(const std::string & err_str){
 int eval_from_stream(std::istream & stream){
 
   Interpreter interp;
+  std::ifstream ifs(STARTUP_FILE);
+  interp.parseStream(ifs);
+  Expression exp = interp.evaluate();
   
   if(!interp.parseStream(stream)){
     error("Invalid Program. Could not parse.");
@@ -69,6 +75,9 @@ int eval_from_command(std::string argexp){
 // A REPL is a repeated read-eval-print loop
 void repl(){
   Interpreter interp;
+  std::ifstream ifs(STARTUP_FILE);
+  interp.parseStream(ifs);
+  Expression exp = interp.evaluate();
     
   while(!std::cin.eof()){
     

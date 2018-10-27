@@ -43,6 +43,10 @@ set(gui_test_src
   notebook_test.cpp
 )
 
+set(STARTUP_FILE ${CMAKE_SOURCE_DIR}/startup.pls)
+configure_file(${CMAKE_SOURCE_DIR}/startup_config.hpp.in ${CMAKE_BINARY_DIR}/startup_config.hpp)
+include_directories(${CMAKE_BINARY_DIR})
+
 
 # ------------------------------------------------
 # You should not need to edit any files below here
