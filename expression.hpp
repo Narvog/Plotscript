@@ -110,6 +110,8 @@ private:
 
   Expression handle_apply(Environment & env);
   Expression handle_map(Environment & env);
+  Expression handle_setprop(Environment & env);
+  Expression handle_getprop(Environment & env);
 
 };
 

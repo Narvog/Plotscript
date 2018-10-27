@@ -655,10 +655,11 @@ Expression Lrange(const std::vector<Expression> & args) {
 	}
 	else
 	{
-		throw SemanticError("Error: either more than, or less than three argument in call to ");
+		throw SemanticError("Error: either more than, or less than three argument in call to range.");
 	}
 	return result;
 };
+
 
 //Variables set up for pi, e, and I
 const double PI = std::atan2(0, -1);

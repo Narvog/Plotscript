@@ -405,6 +405,56 @@ Expression Expression::handle_map(Environment & env)
 	return resultf;
 }
 
+Expression Expression::handle_setprop(Environment & env)
+{
+	if (m_tail.size() == 3)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			m_tail[i] = m_tail[i].eval(env);
+		}
+		if (m_tail[0].head().isString())
+		{
+			m_tail[2].head().add_prop(m_tail[0].head(), m_tail[1].head());
+		}
+		else
+		{
+			throw SemanticError("Error: first argument to set-property not a string");
+		}
+	}
+	else
+	{
+		throw SemanticError("Improper number of arguments in set-property");
+	}
+	return m_tail[2];
+}
+
+Expression Expression::handle_getprop(Environment & env)
+{
+	Atom result;
+	if (m_tail.size() == 2)
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			m_tail[i] = m_tail[i].eval(env);
+		}
+
+		if (m_tail[0].head().isString())
+		{
+			result = m_tail[1].head().get_prop(m_tail[0].head());
+		}
+		else
+		{
+			throw SemanticError("Error: first argument to set-property not a string");
+		}
+	}
+	else
+	{
+		throw SemanticError("Improper number of arguments in get-property");
+	}
+	return Expression(result);
+}
+
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
@@ -417,7 +467,8 @@ Expression Expression::eval(Environment & env){
 	  return env.get_lambda(m_head.asSymbol());
   }
   else if(m_tail.empty()){
-    return handle_lookup(m_head, env);
+	  Expression test = handle_lookup(m_head, env);
+	  return test;
   }
   // handle begin special-form
   else if(m_head.isSymbol() && m_head.asSymbol() == "begin"){
@@ -432,6 +483,13 @@ Expression Expression::eval(Environment & env){
   }
   else if (m_head.isSymbol() && m_head.asSymbol() == "map") {
 	  return handle_map(env);
+  }
+  else if (m_head.isSymbol() && m_head.asSymbol() == "set-property") {
+	  Expression test = handle_setprop(env);
+	  return test;
+  }
+  else if (m_head.isSymbol() && m_head.asSymbol() == "get-property") {
+	  return handle_getprop(env);
   }
   else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
 	  islambda = true;
@@ -456,10 +514,16 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
 	//added the if statement to allow for the proper outputing of complex numbers
 	if (!exp.head().isComplex())
 	{
-		out << "(";
-	}
+		if (!exp.head().isNone() || exp.isLLambda() || exp.isLList())
+		{
+			out << "(";
+		}
 		
-  out << exp.head();
+	}
+	if (!exp.isLLambda() && !exp.isLList())
+	{
+		out << exp.head();
+	}
   std::size_t tailL = exp.rTail().size();
   std::size_t i = 0;
   if ((tailL != 0) && !exp.isLList() && !exp.isLLambda())
@@ -485,7 +549,10 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
   //added the if statement to allow for the proper outputing of complex numbers
   if (!exp.head().isComplex())
   {
-	  out << ")";
+	  if (!exp.head().isNone() || exp.isLLambda() || exp.isLList())
+	  {
+		  out << ")";
+	  }
   }
 
   return out;
