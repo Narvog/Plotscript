@@ -12,8 +12,10 @@ void OutputWidget::recievedData(QString info)
 {
 	passed = info;
 	gScene->clear();
-	QGraphicsTextItem *text = gScene->addText(passed);
+	QGraphicsTextItem *text = new QGraphicsTextItem;
 	text->setPos(0, 0);
+	text->setPlainText(passed);
+	gScene->addItem(text);
 }
 
 void OutputWidget::recievedExp(Expression exp)
@@ -71,9 +73,10 @@ void OutputWidget::helperOut(Expression exp)
 			std::string output;
 			output = out.str();
 			QString fin = QString::fromStdString(output);
-			QGraphicsTextItem *text = gScene->addText(fin);
+			QGraphicsTextItem *text = new QGraphicsTextItem;
 			text->setPos(0, 0);
-			text->setParent(gScene);
+			text->setPlainText(fin);
+			gScene->addItem(text);
 
 		}
 	}
@@ -101,8 +104,10 @@ void OutputWidget::helperOut(Expression exp)
 					output = "";
 				}
 				QString fin = QString::fromStdString(output);
-				QGraphicsTextItem *text = gScene->addText(fin);
+				QGraphicsTextItem *text = new QGraphicsTextItem;
 				text->setPos(0, 0);
+				text->setPlainText(fin);
+				gScene->addItem(text);
 			}
 		}
 		else
@@ -114,9 +119,10 @@ void OutputWidget::helperOut(Expression exp)
 			output = out.str();
 			QString fin = QString::fromStdString(output);
 			//I think there is an error here 
-			QGraphicsTextItem *text = gScene->addText(fin);
+			QGraphicsTextItem *text = new QGraphicsTextItem;
 			text->setPos(0, 0);
-			text->setParent(gView);
+			text->setPlainText(fin);
+			gScene->addItem(text);
 
 		}
 	}

@@ -34,6 +34,8 @@ void NotebookApp::inputSet(QString inputLine)
 
 NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent)
 {
+	input->setObjectName("input");
+	output->setObjectName("output");
 	auto layout = new QGridLayout();
 	layout->addWidget(input, 0, 0);
 	QObject::connect(input, QOverload<QString>::of(&InputWidget::textInputCompleted), this, &NotebookApp::inputSet);
