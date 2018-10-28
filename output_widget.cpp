@@ -102,17 +102,18 @@ void OutputWidget::helperOut(Expression exp)
 				QGraphicsTextItem *text = gScene->addText(fin);
 				text->setPos(0, 0);
 			}
-			else
-			{
-				gScene->clear();
-				std::stringstream out;
-				out << exp;
-				std::string output;
-				output = out.str();
-				QString fin = QString::fromStdString(output);
-				QGraphicsTextItem *text = gScene->addText(fin);
-				text->setPos(0, 0);
-			}
+		}
+		else
+		{
+			gScene->clear();
+			std::stringstream out;
+			out << exp;
+			std::string output;
+			output = out.str();
+			QString fin = QString::fromStdString(output);
+			//I think there is an error here 
+			QGraphicsTextItem *text = gScene->addText(fin);
+			text->setPos(0, 0);
 		}
 	}
 }
