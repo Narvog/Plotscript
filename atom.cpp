@@ -190,6 +190,11 @@ std::string Atom::asString() const noexcept {
 	return result;
 }
 
+void Atom::setString()
+{
+	m_type = StringKind;
+}
+
 bool Atom::operator==(const Atom & right) const noexcept{
   
   if(m_type != right.m_type) return false;

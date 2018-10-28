@@ -64,6 +64,8 @@ public:
 
   std::string asString() const noexcept;
 
+  void setString();
+
   ///value of Atom as a number, returns 0,0 if not a Complex
   complex<double> asComplex() const noexcept;
 

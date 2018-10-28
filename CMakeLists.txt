@@ -35,12 +35,26 @@ set(tui_src
 # EDIT
 # add source for any GUI modules here
 set(gui_src
+	notebook_app.hpp 
+	notebook_app.cpp
+	input_widget.hpp
+	input_widget.cpp
+	output_widget.hpp
+	output_widget.cpp
+	interpreter.hpp 
+	interpreter.cpp
   )
 
 # EDIT
 # add source for any GUI tests here
 set(gui_test_src
-  notebook_test.cpp
+	notebook_test.cpp
+	notebook_app.hpp 
+	notebook_app.cpp
+	input_widget.hpp
+	input_widget.cpp
+	output_widget.hpp
+	output_widget.cpp
 )
 
 set(STARTUP_FILE ${CMAKE_SOURCE_DIR}/startup.pls)
