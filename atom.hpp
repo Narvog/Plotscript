@@ -72,9 +72,6 @@ public:
   /// equality comparison based on type and value
   bool operator==(const Atom & right) const noexcept;
 
-  bool is_prop(const Atom &key) const;
-  Atom get_prop(const Atom &key) const;
-  void add_prop(const Atom &key, const Atom &prop);
 
 private:
 
@@ -91,7 +88,6 @@ private:
     std::string stringValue;
 	complex<double> complexValue;
   };
-  std::map<std::string, Atom> propMap;
 
   // helper to set type and value of Number
   void setNumber(double value);

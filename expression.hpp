@@ -86,10 +86,18 @@ public:
   
   bool inLambda = false;
   void helperinL(Expression & oper);
+
+  bool is_prop(const Atom &key) const;
+  Expression get_prop(const Atom &key) const;
+  void add_prop(const Atom &key, const Expression &prop);
+
 private:
 
   // the head of the expression
   Atom m_head;
+  std::map<std::string, Expression> propMap;
+  
+
   bool isList = false;
   bool islambda = false;
   bool islambdaexp = false;

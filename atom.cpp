@@ -52,7 +52,6 @@ Atom::Atom(const std::string & value): Atom() {
 
 //complex added to the copy constructor
 Atom::Atom(const Atom & x): Atom(){
-	propMap = x.propMap;
   if(x.isNumber()){
     setNumber(x.numberValue);
   }
@@ -71,7 +70,6 @@ Atom::Atom(const Atom & x): Atom(){
 Atom & Atom::operator=(const Atom & x){
 
   if(this != &x){
-	  propMap = x.propMap;
     if(x.m_type == NoneKind){
       m_type = NoneKind;
     }
@@ -277,34 +275,5 @@ std::ostream & operator<<(std::ostream & out, const Atom & a){
   return out;
 }
 
-bool Atom::is_prop(const Atom & key) const {
-	if (!key.isString()) return false;
-	auto result = propMap.find(key.asString());
-	return (result != propMap.end());
-}
 
-
-Atom Atom::get_prop(const Atom & key) const {
-	Atom at;
-	if (key.isString()) {
-		auto result = propMap.find(key.asString());
-		if ((result != propMap.end())) {
-			at = result->second;
-		}
-	}
-	return at;
-}
-
-
-void Atom::add_prop(const Atom & key, const Atom & prop) {
-
-	if (!key.isString()) {
-		throw SemanticError("Attempt to add non-string to the property list.");
-	}
-	if (propMap.find(key.asString()) != propMap.end()) {
-		propMap.erase(key.asString());
-	}
-
-	propMap.emplace(key.asString(), prop);
-}
 

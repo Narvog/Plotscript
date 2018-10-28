@@ -32,14 +32,14 @@ void OutputWidget::helperOut(Expression exp)
 		{
 			Atom checker("\"object-name\"");
 			checker.setString();
-			if (exp.head().is_prop(checker))
+			if (exp.is_prop(checker))
 			{
 				Atom checkerP("\"point\"");
 				checkerP.setString();
 				Atom checkerL("\"line\"");
 				checkerL.setString();
-				Atom type = exp.head().get_prop(checker);
-				if (type == checkerP)
+				Expression type = exp.get_prop(checker);
+				if (type.head() == checkerP)
 				{
 					Atom checkerSize("\"size\"");
 					checkerSize.setString();
@@ -47,12 +47,12 @@ void OutputWidget::helperOut(Expression exp)
 
 					double xloc;
 					double yloc;
-					if (exp.head().is_prop(checkerSize))
+					if (exp.is_prop(checkerSize))
 					{
-						Atom sizeA(exp.head().get_prop(checkerSize));
-						if (sizeA.isNumber())
+						Expression sizeA(exp.get_prop(checkerSize));
+						if (sizeA.head().isNumber())
 						{
-							size = sizeA.asNumber();
+							size = sizeA.head().asNumber();
 						}
 					}
 					if (exp.rTail()[0].head().isNumber())
@@ -88,22 +88,22 @@ void OutputWidget::helperOut(Expression exp)
 					Atom checkerThick("\"thickness\"");
 					checkerThick.setString();
 					double thickness = 1;
-					if (exp.head().is_prop(checkerThick))
+					if (exp.is_prop(checkerThick))
 					{
-						Atom thickA(exp.head().get_prop(checkerThick));
-						if (thickA.isNumber())
+						Expression thickA(exp.get_prop(checkerThick));
+						if (thickA.head().isNumber())
 						{
-							thickness = thickA.asNumber();
+							thickness = thickA.head().asNumber();
 						}
 					}
 						double x1 = 0;
 						double y1 = 0;
 						double x2 = 0;
 						double y2 = 0;
-						if (exp.rTail()[0].head().is_prop(checker))
+						if (exp.rTail()[0].is_prop(checker))
 						{
-							Atom type = exp.rTail()[0].head().get_prop(checker);
-							if (type == checkerP)
+							Expression type = exp.rTail()[0].get_prop(checker);
+							if (type.head() == checkerP)
 							{
 								if (exp.rTail()[0].rTail()[0].isHeadNumber())
 								{
@@ -129,10 +129,10 @@ void OutputWidget::helperOut(Expression exp)
 							}
 
 					}
-						if (exp.rTail()[1].head().is_prop(checker))
+						if (exp.rTail()[1].is_prop(checker))
 						{
-							Atom type = exp.rTail()[1].head().get_prop(checker);
-							if (type == checkerP)
+							Expression type = exp.rTail()[1].get_prop(checker);
+							if (type.head() == checkerP)
 							{
 								if (exp.rTail()[1].rTail()[0].isHeadNumber())
 								{
@@ -198,13 +198,50 @@ void OutputWidget::helperOut(Expression exp)
 	{
 		Atom checker("\"object-name\"");
 		checker.setString();
-		if (exp.head().is_prop(checker))
+		if (exp.is_prop(checker))
 		{
 			Atom checkerT("\"text\"");
 			checkerT.setString();
-			Atom type = exp.head().get_prop(checker);
-			if (type == checkerT)
+			Expression type = exp.get_prop(checker);
+			if (type.head() == checkerT)
 			{
+				Atom checkerP("\"position\"");
+				checkerP.setString();
+				double x1 = 0;
+				double y1 = 0;
+					if (exp.is_prop(checkerP))
+					{
+						Expression type = exp.get_prop(checkerP);
+						Atom checkerPo("\"point\"");
+						checkerPo.setString();
+						if (type.is_prop(checker))
+						{
+							Expression pt = type.get_prop(checker);
+							if (pt.head() == checkerPo)
+							{
+								if (type.rTail()[0].isHeadNumber())
+								{
+									x1 = type.rTail()[0].head().asNumber();
+								}
+								else
+								{
+									//error
+								}
+
+								if (type.rTail()[0].isHeadNumber())
+								{
+									y1 = type.rTail()[1].head().asNumber();
+								}
+								else
+								{
+									//error
+								}
+							}
+						
+						}
+					}
+				
+
 				std::stringstream out;
 				out << exp;
 				std::string output;
@@ -219,7 +256,7 @@ void OutputWidget::helperOut(Expression exp)
 				}
 				QString fin = QString::fromStdString(output);
 				QGraphicsTextItem *text = new QGraphicsTextItem;
-				text->setPos(0, 0);
+				text->setPos(x1, y1);
 				text->setPlainText(fin);
 				gScene->addItem(text);
 			}

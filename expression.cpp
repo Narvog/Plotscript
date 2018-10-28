@@ -21,6 +21,7 @@ Expression::Expression(const Expression & a){
   isList = a.isList;
   islambda = a.islambda;
   inLambda = a.inLambda;
+  propMap = a.propMap;
   for(auto e : a.m_tail){
     m_tail.push_back(e);
   }
@@ -34,6 +35,7 @@ Expression & Expression::operator=(const Expression & a){
 	isList = a.isList;
 	islambda = a.islambda;
 	inLambda = a.inLambda;
+	propMap = a.propMap;
     m_tail.clear();
     for(auto e : a.m_tail){
       m_tail.push_back(e);
@@ -434,7 +436,7 @@ Expression Expression::handle_setprop(Environment & env)
 		}
 		if (m_tail[0].head().isString())
 		{
-			m_tail[2].head().add_prop(m_tail[0].head(), m_tail[1].head());
+			m_tail[2].add_prop(m_tail[0].head(), m_tail[1]);
 		}
 		else
 		{
@@ -450,7 +452,7 @@ Expression Expression::handle_setprop(Environment & env)
 
 Expression Expression::handle_getprop(Environment & env)
 {
-	Atom result;
+	Expression result;
 	if (m_tail.size() == 2)
 	{
 		for (int i = 0; i < 2; i++)
@@ -460,7 +462,7 @@ Expression Expression::handle_getprop(Environment & env)
 
 		if (m_tail[0].head().isString())
 		{
-			result = m_tail[1].head().get_prop(m_tail[0].head());
+			result = m_tail[1].get_prop(m_tail[0].head());
 		}
 		else
 		{
@@ -471,7 +473,7 @@ Expression Expression::handle_getprop(Environment & env)
 	{
 		throw SemanticError("Improper number of arguments in get-property");
 	}
-	return Expression(result);
+	return result;
 }
 
 // this is a simple recursive version. the iterative version is more
@@ -601,4 +603,36 @@ bool Expression::operator==(const Expression & exp) const noexcept{
 bool operator!=(const Expression & left, const Expression & right) noexcept{
 
   return !(left == right);
+}
+
+
+bool Expression::is_prop(const Atom & key) const {
+	if (!key.isString()) return false;
+	auto result = propMap.find(key.asString());
+	return (result != propMap.end());
+}
+
+
+Expression Expression::get_prop(const Atom & key) const {
+	Expression exp;
+	if (key.isString()) {
+		auto result = propMap.find(key.asString());
+		if ((result != propMap.end())) {
+			exp = result->second;
+		}
+	}
+	return exp;
+}
+
+
+void Expression::add_prop(const Atom & key, const Expression & prop) {
+
+	if (!key.isString()) {
+		throw SemanticError("Attempt to add non-string to the property list.");
+	}
+	if (propMap.find(key.asString()) != propMap.end()) {
+		propMap.erase(key.asString());
+	}
+
+	propMap.emplace(key.asString(), prop);
 }
