@@ -232,7 +232,9 @@ bool Atom::operator==(const Atom & right) const noexcept{
 	  {
 		  return false;
 	  }
+	  
   }
+  break;
   case StringKind:
   {
 	  if (right.m_type != StringKind) return false;

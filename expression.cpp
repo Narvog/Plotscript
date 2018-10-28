@@ -268,7 +268,7 @@ Expression Expression::handle_list(Environment & env)
 }
 
 
-Expression Expression::handle_lambda(Environment & env)
+Expression Expression::handle_lambda()
 {
 	if (m_tail.size() == 0)
 	{
@@ -286,7 +286,6 @@ Expression Expression::handle_lambda(Environment & env)
 		s1 = m_tail[0];
 		s2 = m_tail[1];
 		std::size_t s1Length = s1.m_tail.size();
-		std::size_t s2Length = s2.m_tail.size();
 		arguments.rTail().push_back(s1.m_head);
 		for (std::size_t i = 0; i < s1Length; i++)
 		{
@@ -514,7 +513,7 @@ Expression Expression::eval(Environment & env){
   }
   else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
 	  islambda = true;
-	  return handle_lambda(env);
+	  return handle_lambda();
   }
   else if (m_head.isSymbol() && env.is_lambda(m_head))
   {

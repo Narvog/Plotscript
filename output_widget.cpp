@@ -66,9 +66,6 @@ void OutputWidget::helperOut(Expression exp)
 					}
 					if (size >= 0)
 					{
-						qreal qXloc(xloc);
-						qreal qYloc(yloc);
-						qreal qSize(size);
 						QGraphicsEllipseItem * dot = new QGraphicsEllipseItem((xloc -(size/2)), (yloc - (size / 2)), size, size);
 						dot->setBrush(QBrush(QColor(0,0,0), Qt::BrushStyle(Qt::SolidPattern)));
 						gScene->addItem(dot);

@@ -44,9 +44,9 @@ public:
   bool getisStringL() const;
 
 private:
-  bool isStringL;
   TokenType m_type;
   std::string value;
+  bool isStringL;
 };
 
 /*! \typedef TokenSequenceType

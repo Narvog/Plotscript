@@ -9,7 +9,7 @@ class InputWidget : public QPlainTextEdit
 	Q_OBJECT
 
 public:
-	InputWidget(QPlainTextEdit * parent = nullptr);
+	InputWidget();
 	void keyPressEvent(QKeyEvent *ev);
 signals:
 	void textInputCompleted(QString Line);
