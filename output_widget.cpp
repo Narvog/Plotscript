@@ -65,6 +65,7 @@ void OutputWidget::helperOut(Expression exp)
 		}
 		else
 		{
+			gScene->clear();
 			std::stringstream out;
 			out << exp;
 			std::string output;
@@ -103,6 +104,7 @@ void OutputWidget::helperOut(Expression exp)
 			}
 			else
 			{
+				gScene->clear();
 				std::stringstream out;
 				out << exp;
 				std::string output;
