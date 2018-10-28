@@ -69,54 +69,7 @@ void OutputWidget::helperOut(Expression exp)
 						qreal qXloc(xloc);
 						qreal qYloc(yloc);
 						qreal qSize(size);
-						QGraphicsEllipseItem * dot = new QGraphicsEllipseItem(xloc, yloc, size, size);
-						if (xloc > 0)
-						{
-							if (yloc > 0)
-							{
-								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate((-xloc - size / 2), -yloc));
-							}
-							else if (yloc < 0)
-							{
-								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc - size / 2, (-yloc - size / 2)));
-							}
-							else
-							{
-								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc, (-yloc - size / 2)));
-							}
-						}
-						else if(xloc < 0)
-						{
-							if (yloc > 0)
-							{
-								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate((-xloc - size / 2), -yloc));
-							}
-							else if (yloc < 0)
-							{
-								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc - size / 2, (-yloc - size / 2)));
-							}
-							else
-							{
-								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc - size / 2, (-yloc - size / 2)));
-							}
-						}
-						else
-						{
-							if (yloc > 0)
-							{
-								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate((-xloc - size / 2), -yloc));
-							}
-							else if (yloc < 0)
-							{
-								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(xloc - size/2, (-yloc - size / 2)));
-							}
-							else
-							{
-								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc, (-yloc - size / 2)));
-							}
-						}
-
-						
+						QGraphicsEllipseItem * dot = new QGraphicsEllipseItem((xloc -(size/2)), (yloc - (size / 2)), size, size);
 						dot->setBrush(QBrush(QColor(0,0,0), Qt::BrushStyle(Qt::SolidPattern)));
 						gScene->addItem(dot);
 					}
@@ -132,7 +85,85 @@ void OutputWidget::helperOut(Expression exp)
 				}
 				else if (type == checkerL)
 				{
+					Atom checkerThick("\"thickness\"");
+					checkerThick.setString();
+					double thickness = 1;
+					if (exp.head().is_prop(checkerThick))
+					{
+						Atom thickA(exp.head().get_prop(checkerThick));
+						if (thickA.isNumber())
+						{
+							thickness = thickA.asNumber();
+						}
+					}
+						double x1 = 0;
+						double y1 = 0;
+						double x2 = 0;
+						double y2 = 0;
+						if (exp.rTail()[0].head().is_prop(checker))
+						{
+							Atom type = exp.rTail()[0].head().get_prop(checker);
+							if (type == checkerP)
+							{
+								if (exp.rTail()[0].rTail()[0].isHeadNumber())
+								{
+									x1 = exp.rTail()[0].rTail()[0].head().asNumber();
+								}
+								else
+								{
+									//error
+								}
 
+								if (exp.rTail()[0].rTail()[1].isHeadNumber())
+								{
+									y1 = exp.rTail()[0].rTail()[1].head().asNumber();
+								}
+								else
+								{
+									//error
+								}
+							}
+							else
+							{
+								//error argument 1 to line isn't a point
+							}
+
+					}
+						if (exp.rTail()[1].head().is_prop(checker))
+						{
+							Atom type = exp.rTail()[1].head().get_prop(checker);
+							if (type == checkerP)
+							{
+								if (exp.rTail()[1].rTail()[0].isHeadNumber())
+								{
+									x2 = exp.rTail()[1].rTail()[0].head().asNumber();
+								}
+								else
+								{
+									//error
+								}
+
+								if (exp.rTail()[1].rTail()[1].isHeadNumber())
+								{
+									y2 = exp.rTail()[1].rTail()[1].head().asNumber();
+								}
+								else
+								{
+									//error
+								}
+							}
+							else
+							{
+								//error argument 1 to line isn't a point
+							}
+
+						}
+
+						QGraphicsLineItem * line = new QGraphicsLineItem(x1, y1, x2, y2);
+						QPen * pen = new QPen(QColor(0, 0, 0));
+						pen->setWidth(thickness);
+						line->setPen(*pen);
+						gScene->addItem(line);
 				}
 			}
 			else

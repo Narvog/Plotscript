@@ -9,7 +9,7 @@ void NotebookApp::inputSet(QString inputLine)
 
 	std::istringstream expression(line.toStdString());
 	if (!interp.parseStream(expression)) {
-		emit wasSet("Invalid Program. Could not parse.");
+		emit wasSet("Error: Invalid Expression. Could not parse.");
 	}
 	else {
 		bool error = false;
