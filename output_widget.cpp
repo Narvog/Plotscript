@@ -41,13 +41,96 @@ void OutputWidget::helperOut(Expression exp)
 				Atom type = exp.head().get_prop(checker);
 				if (type == checkerP)
 				{
+					Atom checkerSize("\"size\"");
+					checkerSize.setString();
+					double size = 0;
 
+					double xloc;
+					double yloc;
+					if (exp.head().is_prop(checkerSize))
+					{
+						Atom sizeA(exp.head().get_prop(checkerSize));
+						if (sizeA.isNumber())
+						{
+							size = sizeA.asNumber();
+						}
+					}
+					if (exp.rTail()[0].head().isNumber())
+					{
+						xloc = exp.rTail()[0].head().asNumber();
+					}
+
+					if (exp.rTail()[1].head().isNumber())
+					{
+						yloc = exp.rTail()[1].head().asNumber();
+					}
+					if (size >= 0)
+					{
+						qreal qXloc(xloc);
+						qreal qYloc(yloc);
+						qreal qSize(size);
+						QGraphicsEllipseItem * dot = new QGraphicsEllipseItem(xloc, yloc, size, size);
+						if (xloc > 0)
+						{
+							if (yloc > 0)
+							{
+								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate((-xloc - size / 2), -yloc));
+							}
+							else if (yloc < 0)
+							{
+								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc - size / 2, (-yloc - size / 2)));
+							}
+							else
+							{
+								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc, (-yloc - size / 2)));
+							}
+						}
+						else if(xloc < 0)
+						{
+							if (yloc > 0)
+							{
+								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate((-xloc - size / 2), -yloc));
+							}
+							else if (yloc < 0)
+							{
+								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc - size / 2, (-yloc - size / 2)));
+							}
+							else
+							{
+								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc - size / 2, (-yloc - size / 2)));
+							}
+						}
+						else
+						{
+							if (yloc > 0)
+							{
+								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate((-xloc - size / 2), -yloc));
+							}
+							else if (yloc < 0)
+							{
+								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(xloc - size/2, (-yloc - size / 2)));
+							}
+							else
+							{
+								dot->setTransform(QTransform().translate(xloc, yloc).rotate(0).translate(-xloc, (-yloc - size / 2)));
+							}
+						}
+
+						
+						dot->setBrush(QBrush(QColor(0,0,0), Qt::BrushStyle(Qt::SolidPattern)));
+						gScene->addItem(dot);
+					}
+					else
+					{
+						QString fin = "Error: size is a negative number";
+						QGraphicsTextItem *text = new QGraphicsTextItem;
+						text->setPos(0, 0);
+						text->setPlainText(fin);
+						gScene->addItem(text);
+					}
+					
 				}
 				else if (type == checkerL)
-				{
-
-				}
-				else
 				{
 
 				}
