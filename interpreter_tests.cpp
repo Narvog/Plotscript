@@ -1036,6 +1036,8 @@ TEST_CASE("Test Prersonal 45", "[interpreter]") {
 
 	bool ok = interp.parseStream(iss);
 	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+
 }
 
 TEST_CASE("Test Prersonal 46", "[interpreter]") {
@@ -1111,6 +1113,628 @@ TEST_CASE("Test Prersonal 50", "[interpreter]") {
 TEST_CASE("Test Prersonal 51", "[interpreter]") {
 	std::string input = R"((begin
 (sqrt "p")
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 52", "[interpreter]") {
+	std::string input = R"((begin
+(^ "p")
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 53", "[interpreter]") {
+	std::string input = R"((begin
+(^ 2 "p")
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 54", "[interpreter]") {
+	std::string input = R"((begin
+(ln 0)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 55", "[interpreter]") {
+	std::string input = R"((begin
+(ln -1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+TEST_CASE("Test Prersonal 56", "[interpreter]") {
+	std::string input = R"((begin
+(ln (+ I 1))
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 57", "[interpreter]") {
+	std::string input = R"((begin
+(ln 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 58", "[interpreter]") {
+	std::string input = R"((begin
+(sin "q")
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 59", "[interpreter]") {
+	std::string input = R"((begin
+(sin 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 60", "[interpreter]") {
+	std::string input = R"((begin
+(cos 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 61", "[interpreter]") {
+	std::string input = R"((begin
+(cos "a")
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 62", "[interpreter]") {
+	std::string input = R"((begin
+(tan 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 63", "[interpreter]") {
+	std::string input = R"((begin
+(tan "a")
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 64", "[interpreter]") {
+	std::string input = R"((begin
+(apply + (list 1 2 "a"))
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 65", "[interpreter]") {
+	std::string input = R"((begin
+(map + (list 1 2 "a"))
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 66", "[interpreter]") {
+	std::string input = R"((begin
+(real 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 67", "[interpreter]") {
+	std::string input = R"((begin
+(real 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 68", "[interpreter]") {
+	std::string input = R"((begin
+(imag 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 69", "[interpreter]") {
+	std::string input = R"((begin
+(real 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 70", "[interpreter]") {
+	std::string input = R"((begin
+(mag 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 71", "[interpreter]") {
+	std::string input = R"((begin
+(real 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 72", "[interpreter]") {
+	std::string input = R"((begin
+(arg 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 73", "[interpreter]") {
+	std::string input = R"((begin
+(arg 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 74", "[interpreter]") {
+	std::string input = R"((begin
+(conj 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 75", "[interpreter]") {
+	std::string input = R"((begin
+(conj 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 76", "[interpreter]") {
+	std::string input = R"((begin
+(mag 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 77", "[interpreter]") {
+	std::string input = R"((begin
+(length (list))
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	Expression result = run(input);
+	REQUIRE(result == Expression(0.));
+}
+
+TEST_CASE("Test Prersonal 78", "[interpreter]") {
+	std::string input = R"((begin
+(length 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 79", "[interpreter]") {
+	std::string input = R"((begin
+(length (list 1 2) (list 1 2))
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 80", "[interpreter]") {
+	std::string input = R"((begin
+(append (list 1 2) (list 1 2) 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 81", "[interpreter]") {
+	std::string input = R"((begin
+(join (list 1 2) (list 1 2) 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 82", "[interpreter]") {
+	std::string input = R"((begin
+(range 0 0 0)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 83", "[interpreter]") {
+	std::string input = R"((begin
+(range "a" "b" "c")
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 84", "[interpreter]") {
+	std::string input = R"((begin
+(range "a" "b" "c" "d")
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 85", "[interpreter]") {
+	std::string input = R"((begin
+(define x (lambda (1) (+ x 1)))
+(x 2)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 86", "[interpreter]") {
+	std::string input = R"((begin
+(define a (lambda (x) (+ x 1)))
+(define a (lambda (x) (+ x 2)))
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 87", "[interpreter]") {
+	std::string input = R"((begin
+(define 1 (lambda (x) (+ x 1)))
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 88", "[interpreter]") {
+	std::string input = R"((begin
+(define + (lambda (x) (+ x 1)))
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+
+TEST_CASE("Test Prersonal 89", "[interpreter]") {
+	std::string input = R"((begin
+(define a (lambda (x) (+ x 1)))
+(a 1 2)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 90", "[interpreter]") {
+	std::string input = R"((begin
+(apply 1 1 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 91", "[interpreter]") {
+	std::string input = R"((begin
+(set-property 123 1 45)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 92", "[interpreter]") {
+	std::string input = R"((begin
+(define a 1)
+(define b (set-property "hello" 1 a))
+(define b (set-property "hello" 2 a))
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 93", "[interpreter]") {
+	std::string input = R"((begin
+(set-property 123 1 45 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 94", "[interpreter]") {
+	std::string input = R"((begin
+(get-property 123 1 45 1)
+))";
+
+	Interpreter interp;
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 95", "[interpreter]") {
+	std::string input = R"((begin
+(get-property 123 1 45)
 ))";
 
 	Interpreter interp;
