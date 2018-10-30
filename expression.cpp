@@ -617,7 +617,7 @@ Expression Expression::get_prop(const Atom & key) const {
 	if (key.isString()) {
 		auto result = propMap.find(key.asString());
 		if ((result != propMap.end())) {
-			exp = result->second;
+			exp = Expression(result->second);
 		}
 	}
 	return exp;

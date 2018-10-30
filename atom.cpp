@@ -53,12 +53,18 @@ Atom::Atom(const std::string & value): Atom() {
 //complex added to the copy constructor
 Atom::Atom(const Atom & x): Atom(){
   if(x.isNumber()){
+	  if (m_type == SymbolKind || m_type == StringKind) {
+		  stringValue.~basic_string();
+	  }
     setNumber(x.numberValue);
   }
   else if(x.isSymbol()){
     setSymbol(x.stringValue);
   }
   else if (x.isComplex()) {
+	  if (m_type == SymbolKind || m_type == StringKind) {
+		  stringValue.~basic_string();
+	  }
 	setComplex(x.complexValue);
   }
   else if (x.m_type == StringKind) {
@@ -71,15 +77,24 @@ Atom & Atom::operator=(const Atom & x){
 
   if(this != &x){
     if(x.m_type == NoneKind){
+		if (m_type == SymbolKind || m_type == StringKind) {
+			stringValue.~basic_string();
+		}
       m_type = NoneKind;
     }
     else if(x.m_type == NumberKind){
+		if (m_type == SymbolKind || m_type == StringKind) {
+			stringValue.~basic_string();
+		}
       setNumber(x.numberValue);
     }
     else if(x.m_type == SymbolKind){
       setSymbol(x.stringValue);
     }
 	else if (x.m_type == ComplexKind) {
+		if (m_type == SymbolKind || m_type == StringKind) {
+			stringValue.~basic_string();
+		}
 		setComplex(x.complexValue);
 	}
 	else if (x.m_type == StringKind) {
@@ -145,14 +160,11 @@ void Atom::setComplex(const complex<double> value) {
 void Atom::setString(const std::string & value) {
 
 	// we need to ensure the destructor of the symbol string is called
-	if (m_type == StringKind || m_type == SymbolKind) {
-		stringValue.~basic_string();
-	}
+	setSymbol(value);
 
 	m_type = StringKind;
 
 	// copy construct in place
-	new (&stringValue) std::string(value);
 }
 
 double Atom::asNumber() const noexcept{
