@@ -666,7 +666,7 @@ void NotebookTest::Test22()
 
 void NotebookTest::Test23()
 {
-	input->setPlainText("(set-property \"text-rotation\" (/ pi 2) (make-text \"Hello World!\"))");
+	input->setPlainText("(set-property \"text-rotation\" (- (/ pi 2)) (make-text \"Hello World!\"))");
 	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
 	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
 
