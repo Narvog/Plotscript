@@ -1,6 +1,7 @@
 #include "output_widget.hpp"
 #include <sstream>
 #include <QLayout>
+#include <QDebug>
 OutputWidget::OutputWidget(QWidget * parent) : QWidget(parent)
 {
 	auto layout2 = new QHBoxLayout();
@@ -16,6 +17,14 @@ void OutputWidget::recievedData(QString info)
 	text->setPos(0, 0);
 	text->setPlainText(passed);
 	gScene->addItem(text);
+}
+
+void OutputWidget::resizeEvent(QResizeEvent * ev)
+{
+	//qDebug() << "resize Event Caught!";
+	gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
+	//auto resize = ev;
+	//QWidget::resizeEvent(ev);
 }
 
 void OutputWidget::recievedExp(Expression exp)
@@ -237,7 +246,41 @@ void OutputWidget::helperOut(Expression exp)
 						
 						}
 					}
-				
+				Atom checkerS("\"text-scale\"");
+				checkerS.setString();
+				double scale = 1;
+				if (exp.is_prop(checkerS))
+				{
+					Expression scalen = exp.get_prop(checkerS);
+					if (scalen.isHeadNumber())
+					{
+						if (scalen.head().asNumber() > 0)
+						{
+							scale = scalen.head().asNumber();
+						}
+						else
+						{
+							//throw error
+						}
+					}
+					else
+					{
+						//throw error
+					}
+				}
+
+				Atom checkerR("\"text-rotation\"");
+				checkerR.setString();
+				double rad = 0;
+				if (exp.is_prop(checkerR))
+				{
+					Expression rotation = exp.get_prop(checkerR);
+					if (rotation.isHeadNumber())
+					{
+						rad = rotation.head().asNumber() * (180.0 / std::atan2(0, -1));
+					}
+				} 
+
 
 				std::stringstream out;
 				out << exp;
@@ -253,8 +296,13 @@ void OutputWidget::helperOut(Expression exp)
 				}
 				QString fin = QString::fromStdString(output);
 				QGraphicsTextItem *text = new QGraphicsTextItem;
-				text->setPos(x1, y1);
 				text->setPlainText(fin);
+				QFont font;
+				font.fromString("Courier");
+				text->setFont(font);
+				text->setScale(scale);
+				text->setRotation(rad);
+				text->setPos((x1 - (text->boundingRect().width()/2)), (y1 - (text->boundingRect().height() / 2)));
 				gScene->addItem(text);
 			}
 		}

@@ -14,10 +14,11 @@ class OutputWidget : public QWidget
 
 public:
 	OutputWidget(QWidget * parent = nullptr);
-
+	void resizeEvent(QResizeEvent *ev);
 public slots:
 void recievedData(QString info);
 void recievedExp(Expression exp);
+
 
 private:
 	void helperOut(Expression exp);
