@@ -302,13 +302,18 @@ void OutputWidget::helperOut(Expression exp)
 				text->setPlainText(fin);
 				QFont font;
 				font.fromString("Courier");
+				
 				text->setFont(font);
 				text->setScale(scale);
+				text->setTransformOriginPoint(QPointF((x1 + (text->boundingRect().width() / 2)), (y1 + (text->boundingRect().height() / 2))));
 				text->setPos((x1 - (text->boundingRect().width()/2)), (y1 - (text->boundingRect().height() / 2)));
-				auto rect = text->boundingRect();
-				rect.translate((x1 - (text->boundingRect().width() / 2)), (y1 - (text->boundingRect().height() / 2)));
-				auto center = rect.center();
+				
+				//text->setPos(x1, y1);
+				//auto rect = text->boundingRect();
+				//rect.translate((x1 - (text->boundingRect().width() / 2)), (y1 - (text->boundingRect().height() / 2)));
+				//auto center = rect.center();
 				//set the bounded rect in text equal to this bounded rect
+				
 				text->setRotation(rad);
 				gScene->addItem(text);
 			}

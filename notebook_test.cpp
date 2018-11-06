@@ -32,6 +32,7 @@ private slots:
   void Test20();
   void Test21();
   void Test22();
+  void Test23();
 
 private:
 	NotebookApp Notebook;
@@ -624,7 +625,7 @@ void NotebookTest::Test21()
 
 void NotebookTest::Test22()
 {
-	input->setPlainText("(begin (define xloc 0) (define yloc 0) (list (set-property \"position\" (make-point (- xloc 20) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 40) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 60) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 80) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 100) yloc) (make-text \"Hi\"))))");
+	input->setPlainText("(begin (define xloc 0) (define yloc 0) (list (set-property \"position\" (make-point (- xloc 20) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 40) yloc) (make-text \"Pi\")) (set-property \"position\" (make-point (- xloc 60) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 80) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 100) yloc) (make-text \"Hi\"))))");
 	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
 	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
 
@@ -640,7 +641,7 @@ void NotebookTest::Test22()
 	text = scene->itemAt(QPointF(-40, 0), QTransform());
 	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
-	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->toPlainText() == "Pi", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(-40, 0), "Error Text in Wrong Place");
 
 	text = scene->itemAt(QPointF(-60, 0), QTransform());
@@ -660,5 +661,23 @@ void NotebookTest::Test22()
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(-100, 0), "Error Text in Wrong Place");
+
+}
+
+void NotebookTest::Test23()
+{
+	input->setPlainText("(set-property \"text-rotation\" (/ pi 2) (make-text \"Hello World!\"))");
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+	auto text = scene->itemAt(QPointF(0, 0), QTransform());
+	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	//qDebug() << textL->boundingRect().center();
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hello World!", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 0), "Error Text in Wrong Place");
 
 }
