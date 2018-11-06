@@ -14,7 +14,8 @@ void OutputWidget::recievedData(QString info)
 	passed = info;
 	gScene->clear();
 	QGraphicsTextItem *text = new QGraphicsTextItem;
-	text->setPos(0, 0);
+	//text->setPos(0, 0);
+	text->setPos((0 - (text->boundingRect().width() / 2)), (0 - (text->boundingRect().height() / 2)));
 	text->setPlainText(passed);
 	gScene->addItem(text);
 }
@@ -83,7 +84,8 @@ void OutputWidget::helperOut(Expression exp)
 					{
 						QString fin = "Error: size is a negative number";
 						QGraphicsTextItem *text = new QGraphicsTextItem;
-						text->setPos(0, 0);
+						//text->setPos(0, 0);
+						text->setPos((0 - (text->boundingRect().width() / 2)), (0 - (text->boundingRect().height() / 2)));
 						text->setPlainText(fin);
 						gScene->addItem(text);
 					}
@@ -194,7 +196,8 @@ void OutputWidget::helperOut(Expression exp)
 			output = out.str();
 			QString fin = QString::fromStdString(output);
 			QGraphicsTextItem *text = new QGraphicsTextItem;
-			text->setPos(0, 0);
+			//text->setPos(0, 0);
+			text->setPos((0 - (text->boundingRect().width() / 2)), (0 - (text->boundingRect().height() / 2)));
 			text->setPlainText(fin);
 			gScene->addItem(text);
 
@@ -305,7 +308,7 @@ void OutputWidget::helperOut(Expression exp)
 				auto rect = text->boundingRect();
 				rect.translate((x1 - (text->boundingRect().width() / 2)), (y1 - (text->boundingRect().height() / 2)));
 				auto center = rect.center();
-				text->boundingRect().translate((x1 - (text->boundingRect().width() / 2)), (y1 - (text->boundingRect().height() / 2)));
+				//set the bounded rect in text equal to this bounded rect
 				text->setRotation(rad);
 				gScene->addItem(text);
 			}
@@ -320,7 +323,8 @@ void OutputWidget::helperOut(Expression exp)
 			QString fin = QString::fromStdString(output);
 			//I think there is an error here 
 			QGraphicsTextItem *text = new QGraphicsTextItem;
-			text->setPos(0, 0);
+			//text->setPos(0, 0);
+			text->setPos((0 - (text->boundingRect().width() / 2)), (0 - (text->boundingRect().height() / 2)));
 			text->setPlainText(fin);
 			gScene->addItem(text);
 
