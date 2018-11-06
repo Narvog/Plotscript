@@ -301,8 +301,11 @@ void OutputWidget::helperOut(Expression exp)
 				font.fromString("Courier");
 				text->setFont(font);
 				text->setScale(scale);
-				text->setRotation(rad);
 				text->setPos((x1 - (text->boundingRect().width()/2)), (y1 - (text->boundingRect().height() / 2)));
+				auto rect = text->boundingRect();
+				text->boundingRect().translate((x1 - (text->boundingRect().width() / 2)), (y1 - (text->boundingRect().height() / 2)));
+				rect = text->boundingRect();
+				text->setRotation(rad);
 				gScene->addItem(text);
 			}
 		}

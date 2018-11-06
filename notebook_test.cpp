@@ -28,6 +28,8 @@ private slots:
   void Test16();
   void Test17();
   void Test18();
+  void Test19();
+  void Test20();
 
 private:
 	NotebookApp Notebook;
@@ -391,9 +393,10 @@ void NotebookTest::Test14()
 	auto list = scene->items();
 	auto text = list.at(0);
 	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	qDebug() << textL->boundingRect().center();
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hello World!", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(0, 0), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 0), "Error Text in Wrong Place");
 
 }
 
@@ -411,31 +414,31 @@ void NotebookTest::Test15()
 	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(20, 0), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(20, 0), "Error Text in Wrong Place");
 
 	text = list.at(3);
 	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(40, 0), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(40, 0), "Error Text in Wrong Place");
 
 	text = list.at(2);
 	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(60, 0), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(60, 0), "Error Text in Wrong Place");
 
 	text = list.at(1);
 	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(80, 0), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(80, 0), "Error Text in Wrong Place");
 
 	text = list.at(0);
 	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(100, 0), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(100, 0), "Error Text in Wrong Place");
 
 }
 
@@ -453,31 +456,31 @@ void NotebookTest::Test16()
 	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(0, 20), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 20), "Error Text in Wrong Place");
 
 	text = list.at(3);
 	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(0, 40), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 40), "Error Text in Wrong Place");
 
 	text = list.at(2);
 	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(0, 60), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 60), "Error Text in Wrong Place");
 
 	text = list.at(1);
 	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(0, 80), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 80), "Error Text in Wrong Place");
 
 	text = list.at(0);
 	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
-	QVERIFY2(textL->pos() == QPointF(0, 100), "Error Text in Wrong Place");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 100), "Error Text in Wrong Place");
 
 }
 
@@ -514,3 +517,88 @@ void NotebookTest::Test18()
 	QVERIFY2(textL->toPlainText() == "Error: argument to first is not a list", "Incorrect Text");
 
 }
+
+void NotebookTest::Test19()
+{
+	input->setPlainText("(begin (define xloc 0) (define yloc 0) (list (set-property \"position\" (make-point xloc (- yloc 20)) (make-text \"Hi\")) (set-property \"position\" (make-point xloc (- yloc 40)) (make-text \"Hi\")) (set-property \"position\" (make-point xloc (- yloc 60)) (make-text \"Hi\")) (set-property \"position\" (make-point xloc (- yloc 80)) (make-text \"Hi\")) (set-property \"position\" (make-point xloc (- yloc 100)) (make-text \"Hi\"))))");
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+	auto list = scene->items();
+	auto text = list.at(4);
+	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, -20), "Error Text in Wrong Place");
+
+	text = list.at(3);
+	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, -40), "Error Text in Wrong Place");
+
+	text = list.at(2);
+	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, -60), "Error Text in Wrong Place");
+
+	text = list.at(1);
+	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, -80), "Error Text in Wrong Place");
+
+	text = list.at(0);
+	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, -100), "Error Text in Wrong Place");
+
+}
+
+void NotebookTest::Test20()
+{
+	input->setPlainText("(begin (define xloc 0) (define yloc 0) (list (set-property \"position\" (make-point (- xloc 20) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 40) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 60) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 80) yloc) (make-text \"Hi\")) (set-property \"position\" (make-point (- xloc 100) yloc) (make-text \"Hi\"))))");
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+	auto list = scene->items();
+	auto text = list.at(4);
+	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(-20, 0), "Error Text in Wrong Place");
+
+	text = list.at(3);
+	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(-40, 0), "Error Text in Wrong Place");
+
+	text = list.at(2);
+	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(-60, 0), "Error Text in Wrong Place");
+
+	text = list.at(1);
+	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(-80, 0), "Error Text in Wrong Place");
+
+	text = list.at(0);
+	textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
+	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(-100, 0), "Error Text in Wrong Place");
+
+}
+
