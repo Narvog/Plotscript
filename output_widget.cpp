@@ -32,10 +32,12 @@ void OutputWidget::recievedExp(Expression exp)
 {
 	gScene->clear();
 	helperOut(exp);
+	gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void OutputWidget::helperOut(Expression exp)
 {
+	gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
 	if (exp.head().isNone())
 	{
 		if (exp.isLList())
@@ -300,9 +302,10 @@ void OutputWidget::helperOut(Expression exp)
 				QString fin = QString::fromStdString(output);
 				QGraphicsTextItem *text = new QGraphicsTextItem;
 				text->setPlainText(fin);
-				QFont font;
-				font.fromString("Courier");
-				
+				auto font = QFont("Monospace");
+				font.setStyleHint(QFont::TypeWriter);
+				font.setPointSize(1);
+
 				text->setFont(font);
 				text->setScale(scale);
 				text->setTransformOriginPoint(QPointF((x1 + (text->boundingRect().width() / 2)), (y1 + (text->boundingRect().height() / 2))));

@@ -122,7 +122,9 @@ private:
   Expression handle_map(Environment & env);
   Expression handle_setprop(Environment & env);
   Expression handle_getprop(Environment & env);
-
+  Expression handle_discplot(Environment & env);
+  Expression make_box(Environment & env, const double N);
+  Expression make_pos_labels(Environment & env, const double N, const double C, const double D, const double minX, const double maxX, const double minY, const double maxY);
 };
 
 /// Render expression to output stream

@@ -157,7 +157,7 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 	}
 	else if (head.isString())
 	{
-		return Expression(head);
+		return *this;
 	}
     else{
       throw SemanticError("Error during evaluation: Invalid type in terminal expression");
@@ -475,6 +475,264 @@ Expression Expression::handle_getprop(Environment & env)
 	return result;
 }
 
+Expression Expression::handle_discplot(Environment & env)
+{
+	double N = 20;
+	double A = 3;
+	double B = 3;
+	double C = 2;
+	double D = 2;
+	double P = 0.5;
+
+
+	Expression resultf;
+	Expression resultb;
+	Expression resultTM;
+	Expression stage1;
+	Atom list("list");
+	Atom thickness("\"thickness\"");
+	thickness.setString();
+	m_head = list;
+	stage1 = eval(env);
+	resultb = make_box(env, N);
+
+	if (stage1.rTail().size() > 0)
+	{
+		Expression points = stage1.rTail()[0];
+		if (points.rTail().size() > 0)
+		{
+			double maxX = -10000;
+			double minX = 100000;
+			double maxY = -10000;
+			double minY = 100000;
+			for (std::size_t i = 0; i < points.rTail().size(); i++)
+			{
+				Expression point = points.rTail()[i];
+				if (point.rTail().size() == 2)
+				{
+					if (point.rTail()[0].isHeadNumber())
+					{
+						if (maxX < point.rTail()[0].head().asNumber())
+						{
+							maxX = point.rTail()[0].head().asNumber();
+						}
+
+						if (minX > point.rTail()[0].head().asNumber())
+						{
+							minX = point.rTail()[0].head().asNumber();
+						}
+					}
+					else
+					{
+						//error
+					}
+
+					if (point.rTail()[1].isHeadNumber())
+					{
+						if (maxY < point.rTail()[1].head().asNumber())
+						{
+							maxY = point.rTail()[1].head().asNumber();
+						}
+
+						if (minY > point.rTail()[1].head().asNumber())
+						{
+							minY = point.rTail()[1].head().asNumber();
+						}
+					}
+					else
+					{
+						//error
+					}
+				}
+				else
+				{
+					//error
+				}
+			}
+			
+			resultTM = make_pos_labels(env, N, C, D, minX, maxX, minY, maxY);
+
+			double midX = (maxX + minX)/2;
+			double midY = (maxY + minY)/2;
+
+			double scaleX = ((abs(maxX) + abs(minX)) / N);
+			double scaleY = -1*((abs(maxY) + abs(minY)) / N);
+		}
+		else
+		{
+			//error
+		}
+	}
+	else
+	{
+		//error
+	}
+	Expression join(Atom("join"));
+	join.rTail().emplace_back(resultb);
+	join.rTail().emplace_back(resultTM);
+	resultf = join.eval(env);
+	return resultf;
+}
+
+Expression Expression::make_box(Environment & env, const double N)
+{
+	Expression resultb;
+	Atom list("list");
+	Atom thickness("\"thickness\"");
+	thickness.setString();
+	Expression stage2(list);
+	Expression boxu(Atom("make-line"));
+	Expression fpu(Atom("make-point"));
+	fpu.append(Atom(-N/2));
+	fpu.append(Atom(-N/2));
+	Expression spu(Atom("make-point"));
+	spu.append(Atom(N/2));
+	spu.append(Atom(-N/2));
+	boxu.rTail().push_back(fpu);
+	boxu.rTail().push_back(spu);
+	boxu = boxu.eval(env);
+
+	boxu.add_prop(thickness, Expression(0));
+	
+	stage2.rTail().push_back(boxu);
+
+	Expression boxd(Atom("make-line"));
+	Expression fpd(Atom("make-point"));
+	fpd.append(Atom(N/2));
+	fpd.append(Atom(N/2));
+	Expression spd(Atom("make-point"));
+	spd.append(Atom(-N/2));
+	spd.append(Atom(N/2));
+	boxd.rTail().push_back(fpd);
+	boxd.rTail().push_back(spd);
+	boxd = boxd.eval(env);
+
+	boxd.add_prop(thickness, Expression(0));
+	
+	stage2.rTail().push_back(boxd);
+
+	Expression boxr(Atom("make-line"));
+	Expression fpr(Atom("make-point"));
+	fpr.append(Atom(N/2));
+	fpr.append(Atom(-N/2));
+	Expression spr(Atom("make-point"));
+	spr.append(Atom(N/2));
+	spr.append(Atom(N/2));
+	boxr.rTail().push_back(fpr);
+	boxr.rTail().push_back(spr);
+	boxr = boxr.eval(env);
+
+	boxr.add_prop(thickness, Expression(0));
+	stage2.rTail().push_back(boxr);
+
+	Expression boxl(Atom("make-line"));
+	Expression fpl(Atom("make-point"));
+	fpl.append(Atom(-N/2));
+	fpl.append(Atom(-N/2));
+	Expression spl(Atom("make-point"));
+	spl.append(Atom(-N/2));
+	spl.append(Atom(N/2));
+	boxl.rTail().push_back(fpl);
+	boxl.rTail().push_back(spl);
+	boxl = boxl.eval(env);
+
+	boxl.add_prop(thickness, Expression(0));
+	stage2.rTail().push_back(boxl);
+
+	resultb = stage2.eval(env);
+	return resultb;
+}
+
+Expression Expression::make_pos_labels(Environment & env, const double N, const double C, const double D, const double minX, const double maxX, const double minY, const double maxY)
+{
+	Atom list("list");
+	Expression stage2(list);
+
+	Atom text("make-text");
+	Atom position("\"position\"");
+	position.setString();
+
+	Expression OU(text);
+	std::string textConOU;
+	textConOU = "\"" + std::to_string((int)std::round(maxY)) + "\"";
+	Atom OUCon(textConOU);
+	OUCon.setString();
+	OU.append(OUCon);
+
+	Expression OUF = OU.eval(env);
+
+
+	Expression OUpos(Atom("make-point"));
+	OUpos.append(Atom(((-N / 2) - D)));
+	OUpos.append(Atom(((-N / 2))));
+
+	OUpos = OUpos.eval(env);
+
+	OUF.add_prop(position, OUpos);
+	stage2.rTail().push_back(OUF);
+
+
+	Expression OL(text);
+	std::string textConOL;
+	textConOL = "\"" + std::to_string((int)std::round(minY)) + "\"";
+	Atom OLCon(textConOL);
+	OLCon.setString();
+	OL.append(OLCon);
+
+	Expression OLF = OL.eval(env);
+
+
+	Expression OLpos(Atom("make-point"));
+	OLpos.append(Atom(((-N / 2) - D)));
+	OLpos.append(Atom(((N / 2))));
+
+	OLpos = OLpos.eval(env);
+
+	OLF.add_prop(position, OLpos);
+	stage2.rTail().push_back(OLF);
+
+	Expression AL(text);
+	std::string textConAL;
+	textConAL = "\"" + std::to_string((int)std::round(minX)) + "\"";
+	Atom ALCon(textConAL);
+	ALCon.setString();
+	AL.append(ALCon);
+
+	Expression ALF = AL.eval(env);
+
+
+	Expression ALpos(Atom("make-point"));
+	ALpos.append(Atom(((-N / 2))));
+	ALpos.append(Atom(((N / 2) + C)));
+
+	ALpos = ALpos.eval(env);
+
+	ALF.add_prop(position, ALpos);
+	stage2.rTail().push_back(ALF);
+
+
+	Expression AU(text);
+	std::string textConAU;
+	textConAU = "\"" + std::to_string((int)std::round(maxX)) + "\"";
+	Atom AUCon(textConAU);
+	AUCon.setString();
+	AU.append(AUCon);
+
+	Expression AUF = AU.eval(env);
+
+
+	Expression AUpos(Atom("make-point"));
+	AUpos.append(Atom(((N / 2))));
+	AUpos.append(Atom(((N / 2) + C)));
+
+	AUpos = AUpos.eval(env);
+
+	AUF.add_prop(position, AUpos);
+	stage2.rTail().push_back(AUF);
+	Expression resultTM = stage2.eval(env);
+	return resultTM;
+}
+
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
@@ -510,6 +768,9 @@ Expression Expression::eval(Environment & env){
   }
   else if (m_head.isSymbol() && m_head.asSymbol() == "get-property") {
 	  return handle_getprop(env);
+  }
+  else if (m_head.isSymbol() && m_head.asSymbol() == "discrete-plot") {
+	  return handle_discplot(env);
   }
   else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
 	  islambda = true;
