@@ -32,12 +32,12 @@ void OutputWidget::recievedExp(Expression exp)
 {
 	gScene->clear();
 	helperOut(exp);
-	gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
+	//gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void OutputWidget::helperOut(Expression exp)
 {
-	gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
+	//gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
 	if (exp.head().isNone())
 	{
 		if (exp.isLList())
@@ -308,17 +308,13 @@ void OutputWidget::helperOut(Expression exp)
 
 				text->setFont(font);
 				text->setScale(scale);
-				text->setTransformOriginPoint(QPointF((x1 + (text->boundingRect().width() / 2)), (y1 + (text->boundingRect().height() / 2))));
-				text->setPos((x1 - (text->boundingRect().width()/2)), (y1 - (text->boundingRect().height() / 2)));
 				
-				//text->setPos(x1, y1);
-				//auto rect = text->boundingRect();
-				//rect.translate((x1 - (text->boundingRect().width() / 2)), (y1 - (text->boundingRect().height() / 2)));
-				//auto center = rect.center();
-				//set the bounded rect in text equal to this bounded rect
-				
+				text->setPos((x1 - (text->boundingRect().width() / 2)), (y1 - (text->boundingRect().height() / 2)));
+				text->setTransformOriginPoint(QPointF(((text->boundingRect().width() / 2)), ((text->boundingRect().height() / 2))));
 				text->setRotation(rad);
+				
 				gScene->addItem(text);
+				
 			}
 		}
 		else

@@ -124,7 +124,8 @@ private:
   Expression handle_getprop(Environment & env);
   Expression handle_discplot(Environment & env);
   Expression make_box(Environment & env, const double N);
-  Expression make_pos_labels(Environment & env, const double N, const double C, const double D, const double minX, const double maxX, const double minY, const double maxY);
+  Expression make_pos_labels(Environment & env, const double N, const double C, const double D, const double scale, const double minX, const double maxX, const double minY, const double maxY);
+  Expression helper_make_text(Environment & env, const std::string cont, const double XN, const double YN, const double X, const double Y, const double scale);
 };
 
 /// Render expression to output stream

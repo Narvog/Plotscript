@@ -734,6 +734,9 @@ int findText(QGraphicsScene * scene, QPointF center, qreal rotation, QString con
 	foreach(auto item, scene->items(center)) {
 		if (item->type() == QGraphicsTextItem::Type) {
 			QGraphicsTextItem * text = static_cast<QGraphicsTextItem *>(item);
+			//qDebug() << text->toPlainText() << " : " << contents << "\n";
+			//qDebug() << text->rotation() << " : " << rotation << "\n";
+			//qDebug() << text->pos() + text->boundingRect().center() << " : " << center << "\n";
 			if ((text->toPlainText() == contents) &&
 				(text->rotation() == rotation) &&
 				(text->pos() + text->boundingRect().center() == center)) {
@@ -802,13 +805,13 @@ void NotebookTest::testDiscretePlotLayout()
 	double ymiddle = (ymax + ymin) / 2;
 
 	// check title
-	//QCOMPARE(findText(scene, QPointF(xmiddle, -(ymax + 3)), 0, QString("The Title")), 1);
+	QCOMPARE(findText(scene, QPointF(xmiddle, -(ymax + 3)), 0, QString("The Title")), 1);
 
 	// check abscissa label
-	//QCOMPARE(findText(scene, QPointF(xmiddle, -(ymin - 3)), 0, QString("X Label")), 1);
+	QCOMPARE(findText(scene, QPointF(xmiddle, -(ymin - 3)), 0, QString("X Label")), 1);
 
 	// check ordinate label
-	//QCOMPARE(findText(scene, QPointF(xmin - 3, -ymiddle), -90, QString("Y Label")), 1);
+	QCOMPARE(findText(scene, QPointF(xmin - 3, -ymiddle), -90, QString("Y Label")), 1);
 
 	// check abscissa min label
 	QCOMPARE(findText(scene, QPointF(xmin, -(ymin - 2)), 0, QString("-1")), 1);

@@ -483,11 +483,13 @@ Expression Expression::handle_discplot(Environment & env)
 	double C = 2;
 	double D = 2;
 	double P = 0.5;
-
+	double scale = 1;
 
 	Expression resultf;
 	Expression resultb;
 	Expression resultTM;
+	Expression resultTitles;
+	bool areTitles = false;
 	Expression stage1;
 	Atom list("list");
 	Atom thickness("\"thickness\"");
@@ -498,6 +500,95 @@ Expression Expression::handle_discplot(Environment & env)
 
 	if (stage1.rTail().size() > 0)
 	{
+
+		if (stage1.rTail().size() == 2)
+		{
+			Expression titles = stage1.rTail()[1];
+
+			if (titles.isLList())
+			{
+				//find text scale if applicable;
+				for (std::size_t i = 0; i < titles.rTail().size(); i++)
+				{
+					if (titles.rTail()[i].rTail().size() == 2)
+					{
+						if (titles.rTail()[i].rTail()[0].head().isString())
+						{
+							if (titles.rTail()[i].rTail()[0].head().asString() == "\"text-scale\"")
+							{
+								if (titles.rTail()[i].rTail()[1].isHeadNumber())
+								{
+									scale = titles.rTail()[i].rTail()[1].head().asNumber();
+								}
+							}
+						}
+					}
+					else
+					{
+						//error
+					}
+
+				}
+
+				Atom list("list");
+				Expression stage2(list);
+				for (std::size_t i = 0; i < titles.rTail().size(); i++)
+				{
+					if (titles.rTail()[i].rTail().size() == 2)
+					{
+						
+						if (titles.rTail()[i].rTail()[0].head().isString())
+						{
+							
+							if (titles.rTail()[i].rTail()[0].head().asString() == "\"title\"")
+							{
+								if (titles.rTail()[i].rTail()[1].head().isString())
+								{
+									areTitles = true;
+									Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), 0, -N, 0, -A, scale);
+									stage2.rTail().push_back(textO);
+								}
+							}
+							else if (titles.rTail()[i].rTail()[0].head().asString() == "\"abscissa-label\"")
+							{
+								if (titles.rTail()[i].rTail()[1].head().isString())
+								{
+									areTitles = true;
+									Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), 0, N, 0, A, scale);
+									stage2.rTail().push_back(textO);
+								}
+							}
+							else if (titles.rTail()[i].rTail()[0].head().asString() == "\"ordinate-label\"")
+							{
+								if (titles.rTail()[i].rTail()[1].head().isString())
+								{
+									areTitles = true;
+									Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), -N, 0, -B, 0, scale);
+									Atom rot("\"text-rotation\"");
+									rot.setString();
+									textO.add_prop(rot, Expression(Atom(std::atan2(0, -1) * -1 / 2)));
+									stage2.rTail().push_back(textO);
+								}
+							}
+						}
+					}
+					else
+					{
+						//error
+					}
+
+				}
+				if(areTitles)
+				{
+					resultTitles = stage2.eval(env);
+				}
+			}
+			else
+			{
+				//error
+			}
+		}
+
 		Expression points = stage1.rTail()[0];
 		if (points.rTail().size() > 0)
 		{
@@ -550,27 +641,45 @@ Expression Expression::handle_discplot(Environment & env)
 				}
 			}
 			
-			resultTM = make_pos_labels(env, N, C, D, minX, maxX, minY, maxY);
+			resultTM = make_pos_labels(env, N, C, D, scale, minX, maxX, minY, maxY);
+
+
+
+
 
 			double midX = (maxX + minX)/2;
 			double midY = (maxY + minY)/2;
 
 			double scaleX = ((abs(maxX) + abs(minX)) / N);
 			double scaleY = -1*((abs(maxY) + abs(minY)) / N);
+
 		}
 		else
 		{
 			//error
 		}
+
+
 	}
 	else
 	{
 		//error
 	}
-	Expression join(Atom("join"));
-	join.rTail().emplace_back(resultb);
-	join.rTail().emplace_back(resultTM);
-	resultf = join.eval(env);
+	Expression join1(Atom("join"));
+	join1.rTail().emplace_back(resultb);
+	join1.rTail().emplace_back(resultTM);
+	Expression result1 = join1.eval(env);
+	if (!areTitles)
+	{
+		return result1;
+	}
+	else
+	{
+		Expression join2(Atom("join"));
+		join2.rTail().emplace_back(result1);
+		join2.rTail().emplace_back(resultTitles);
+		resultf = join2.eval(env);
+	}
 	return resultf;
 }
 
@@ -643,19 +752,45 @@ Expression Expression::make_box(Environment & env, const double N)
 	return resultb;
 }
 
-Expression Expression::make_pos_labels(Environment & env, const double N, const double C, const double D, const double minX, const double maxX, const double minY, const double maxY)
+Expression Expression::make_pos_labels(Environment & env, const double N, const double C, const double D, const double scale, const double minX, const double maxX, const double minY, const double maxY)
 {
 	Atom list("list");
 	Expression stage2(list);
+	std::string textConOU;
+	textConOU = "\"" + std::to_string((int)std::round(maxY)) + "\"";
+	Expression OUF = helper_make_text(env, textConOU, -N, -N, -D, 0, scale);
+	stage2.rTail().push_back(OUF);
+
+
+	std::string textConOL;
+	textConOL = "\"" + std::to_string((int)std::round(minY)) + "\"";
+	Expression OLF = helper_make_text(env, textConOL, -N, N, -D, 0, scale);	
+	stage2.rTail().push_back(OLF);
+
+	std::string textConAL;
+	textConAL = "\"" + std::to_string((int)std::round(minX)) + "\"";
+	Expression ALF = helper_make_text(env, textConAL, -N, N, 0, C, scale);
+	stage2.rTail().push_back(ALF);
+
+	std::string textConAU;
+	textConAU = "\"" + std::to_string((int)std::round(maxX)) + "\"";
+	Expression AUF = helper_make_text(env, textConAU, N, N, 0, C, scale);
+	stage2.rTail().push_back(AUF);
+	Expression resultTM = stage2.eval(env);
+	return resultTM;
+}
+
+Expression Expression::helper_make_text(Environment & env, const std::string cont, const double XN, const double YN, const double X, const double Y, const double scale)
+{
+	
 
 	Atom text("make-text");
 	Atom position("\"position\"");
 	position.setString();
 
 	Expression OU(text);
-	std::string textConOU;
-	textConOU = "\"" + std::to_string((int)std::round(maxY)) + "\"";
-	Atom OUCon(textConOU);
+
+	Atom OUCon(cont);
 	OUCon.setString();
 	OU.append(OUCon);
 
@@ -663,74 +798,17 @@ Expression Expression::make_pos_labels(Environment & env, const double N, const 
 
 
 	Expression OUpos(Atom("make-point"));
-	OUpos.append(Atom(((-N / 2) - D)));
-	OUpos.append(Atom(((-N / 2))));
+	OUpos.append(Atom(((XN / 2) + X)));
+	OUpos.append(Atom(((YN / 2) + Y)));
 
 	OUpos = OUpos.eval(env);
 
+	Atom scaleT("\"text-scale\"");
+	scaleT.setString();
+
 	OUF.add_prop(position, OUpos);
-	stage2.rTail().push_back(OUF);
-
-
-	Expression OL(text);
-	std::string textConOL;
-	textConOL = "\"" + std::to_string((int)std::round(minY)) + "\"";
-	Atom OLCon(textConOL);
-	OLCon.setString();
-	OL.append(OLCon);
-
-	Expression OLF = OL.eval(env);
-
-
-	Expression OLpos(Atom("make-point"));
-	OLpos.append(Atom(((-N / 2) - D)));
-	OLpos.append(Atom(((N / 2))));
-
-	OLpos = OLpos.eval(env);
-
-	OLF.add_prop(position, OLpos);
-	stage2.rTail().push_back(OLF);
-
-	Expression AL(text);
-	std::string textConAL;
-	textConAL = "\"" + std::to_string((int)std::round(minX)) + "\"";
-	Atom ALCon(textConAL);
-	ALCon.setString();
-	AL.append(ALCon);
-
-	Expression ALF = AL.eval(env);
-
-
-	Expression ALpos(Atom("make-point"));
-	ALpos.append(Atom(((-N / 2))));
-	ALpos.append(Atom(((N / 2) + C)));
-
-	ALpos = ALpos.eval(env);
-
-	ALF.add_prop(position, ALpos);
-	stage2.rTail().push_back(ALF);
-
-
-	Expression AU(text);
-	std::string textConAU;
-	textConAU = "\"" + std::to_string((int)std::round(maxX)) + "\"";
-	Atom AUCon(textConAU);
-	AUCon.setString();
-	AU.append(AUCon);
-
-	Expression AUF = AU.eval(env);
-
-
-	Expression AUpos(Atom("make-point"));
-	AUpos.append(Atom(((N / 2))));
-	AUpos.append(Atom(((N / 2) + C)));
-
-	AUpos = AUpos.eval(env);
-
-	AUF.add_prop(position, AUpos);
-	stage2.rTail().push_back(AUF);
-	Expression resultTM = stage2.eval(env);
-	return resultTM;
+	OUF.add_prop(scaleT, Expression(Atom(scale)));
+	return OUF;
 }
 
 // this is a simple recursive version. the iterative version is more
