@@ -489,7 +489,10 @@ Expression Expression::handle_discplot(Environment & env)
 	Expression resultb;
 	Expression resultTM;
 	Expression resultTitles;
+	Expression resultAxes;
+	Expression resultplot;
 	bool areTitles = false;
+	bool hasAxes = false;
 	Expression stage1;
 	Atom list("list");
 	Atom thickness("\"thickness\"");
@@ -650,9 +653,66 @@ Expression Expression::handle_discplot(Environment & env)
 			double midX = (maxX + minX)/2;
 			double midY = (maxY + minY)/2;
 
-			double scaleX = ((abs(maxX) + abs(minX)) / N);
-			double scaleY = -1*((abs(maxY) + abs(minY)) / N);
+			double scaleX = (N / (abs(maxX) + abs(minX)));
+			double scaleY = -1*(N / (abs(maxY) + abs(minY)));
+			double Xaxis = minY;
+			double Yaxis = minX;
+			bool hasXaxis = false;
+			
+			Expression stage2(list);
+			if (minY < 0 && maxY > 0)
+			{
+				hasAxes = true;
+				hasXaxis = true;
+				Xaxis = -midY * scaleY;
+				Expression XA = helper_make_line(env, -N / 2, Xaxis, N / 2, Xaxis, 0);
+				stage2.rTail().push_back(XA);
+			}
 
+			if (minX < 0 && maxX > 0)
+			{
+				hasAxes = true;
+				Yaxis = -midX * scaleX;
+				Expression YA = helper_make_line(env, Yaxis, -N/2, Yaxis, N/2, 0);
+				stage2.rTail().push_back(YA);
+			}
+			if (hasAxes)
+			{
+				resultAxes = stage2.eval(env);
+			}
+
+			Expression stage3(list);
+			for (size_t i = 0; i < points.rTail().size(); i++)
+			{
+				double x;
+				double y;
+				Expression point = points.rTail()[i];
+				if (point.rTail().size() == 2)
+				{
+					if (point.rTail()[0].isHeadNumber())
+					{
+						x = ((point.rTail()[0].head().asNumber() - midX) * scaleX);
+					}
+					else
+					{
+						//error
+					}
+
+					if (point.rTail()[1].isHeadNumber())
+					{
+						y = ((point.rTail()[1].head().asNumber() - midY) * scaleY);
+					}
+					else
+					{
+						//error
+					}
+				}
+				Expression dot = helper_make_point(env, x, y, P);
+				Expression line = helper_make_line(env, x, y, x, Xaxis, 0);
+				stage3.rTail().push_back(dot);
+				stage3.rTail().push_back(line);
+			}
+			resultplot = stage3.eval(env);
 		}
 		else
 		{
@@ -669,16 +729,32 @@ Expression Expression::handle_discplot(Environment & env)
 	join1.rTail().emplace_back(resultb);
 	join1.rTail().emplace_back(resultTM);
 	Expression result1 = join1.eval(env);
+
+	//implement join2 here
+	if (hasAxes)
+	{
+		Expression join2(Atom("join"));
+		join2.rTail().push_back(result1);
+		join2.rTail().emplace_back(resultAxes);
+		result1 = join2.eval(env);
+	}
+
+	//implement join3 here
+	Expression join3(Atom("join"));
+	join3.rTail().push_back(result1);
+	join3.rTail().emplace_back(resultplot);
+	Expression result2 = join3.eval(env);
+
 	if (!areTitles)
 	{
-		return result1;
+		return result2;
 	}
 	else
 	{
-		Expression join2(Atom("join"));
-		join2.rTail().emplace_back(result1);
-		join2.rTail().emplace_back(resultTitles);
-		resultf = join2.eval(env);
+		Expression join4(Atom("join"));
+		join4.rTail().emplace_back(result2);
+		join4.rTail().emplace_back(resultTitles);
+		resultf = join4.eval(env);
 	}
 	return resultf;
 }
@@ -687,65 +763,18 @@ Expression Expression::make_box(Environment & env, const double N)
 {
 	Expression resultb;
 	Atom list("list");
-	Atom thickness("\"thickness\"");
-	thickness.setString();
-	Expression stage2(list);
-	Expression boxu(Atom("make-line"));
-	Expression fpu(Atom("make-point"));
-	fpu.append(Atom(-N/2));
-	fpu.append(Atom(-N/2));
-	Expression spu(Atom("make-point"));
-	spu.append(Atom(N/2));
-	spu.append(Atom(-N/2));
-	boxu.rTail().push_back(fpu);
-	boxu.rTail().push_back(spu);
-	boxu = boxu.eval(env);
-
-	boxu.add_prop(thickness, Expression(0));
 	
+	Expression stage2(list);
+	Expression boxu = helper_make_line(env, (-N / 2), (-N / 2), (N / 2), (-N / 2), 0);
 	stage2.rTail().push_back(boxu);
 
-	Expression boxd(Atom("make-line"));
-	Expression fpd(Atom("make-point"));
-	fpd.append(Atom(N/2));
-	fpd.append(Atom(N/2));
-	Expression spd(Atom("make-point"));
-	spd.append(Atom(-N/2));
-	spd.append(Atom(N/2));
-	boxd.rTail().push_back(fpd);
-	boxd.rTail().push_back(spd);
-	boxd = boxd.eval(env);
-
-	boxd.add_prop(thickness, Expression(0));
-	
+	Expression boxd = helper_make_line(env, (N / 2), (N / 2), (-N / 2), (N / 2), 0);
 	stage2.rTail().push_back(boxd);
 
-	Expression boxr(Atom("make-line"));
-	Expression fpr(Atom("make-point"));
-	fpr.append(Atom(N/2));
-	fpr.append(Atom(-N/2));
-	Expression spr(Atom("make-point"));
-	spr.append(Atom(N/2));
-	spr.append(Atom(N/2));
-	boxr.rTail().push_back(fpr);
-	boxr.rTail().push_back(spr);
-	boxr = boxr.eval(env);
-
-	boxr.add_prop(thickness, Expression(0));
+	Expression boxr = helper_make_line(env, (N / 2), (-N / 2), (N / 2), (N / 2), 0);
 	stage2.rTail().push_back(boxr);
 
-	Expression boxl(Atom("make-line"));
-	Expression fpl(Atom("make-point"));
-	fpl.append(Atom(-N/2));
-	fpl.append(Atom(-N/2));
-	Expression spl(Atom("make-point"));
-	spl.append(Atom(-N/2));
-	spl.append(Atom(N/2));
-	boxl.rTail().push_back(fpl);
-	boxl.rTail().push_back(spl);
-	boxl = boxl.eval(env);
-
-	boxl.add_prop(thickness, Expression(0));
+	Expression boxl = helper_make_line(env, (-N / 2), (-N / 2), (-N / 2), (N / 2), 0);
 	stage2.rTail().push_back(boxl);
 
 	resultb = stage2.eval(env);
@@ -796,12 +825,7 @@ Expression Expression::helper_make_text(Environment & env, const std::string con
 
 	Expression OUF = OU.eval(env);
 
-
-	Expression OUpos(Atom("make-point"));
-	OUpos.append(Atom(((XN / 2) + X)));
-	OUpos.append(Atom(((YN / 2) + Y)));
-
-	OUpos = OUpos.eval(env);
+	Expression OUpos = helper_make_point(env, ((XN/2)+X), ((YN/2)+Y), 0);
 
 	Atom scaleT("\"text-scale\"");
 	scaleT.setString();
@@ -809,6 +833,33 @@ Expression Expression::helper_make_text(Environment & env, const std::string con
 	OUF.add_prop(position, OUpos);
 	OUF.add_prop(scaleT, Expression(Atom(scale)));
 	return OUF;
+}
+
+Expression Expression::helper_make_line(Environment & env, const double x1, const double y1, const double x2, const double y2, const double thickness)
+{
+	Atom thicknessA("\"thickness\"");
+	thicknessA.setString();
+	Expression boxu(Atom("make-line"));
+	Expression fpu = helper_make_point(env, x1, y1, 0);
+	Expression spu = helper_make_point(env, x2, y2, 0);
+	boxu.rTail().push_back(fpu);
+	boxu.rTail().push_back(spu);
+	boxu = boxu.eval(env);
+
+	boxu.add_prop(thicknessA, Expression(thickness));
+	return boxu;
+}
+
+Expression Expression::helper_make_point(Environment & env, const double x, const double y, const double size)
+{
+	Atom sizeA("\"size\"");
+	sizeA.setString();
+	Expression fpu(Atom("make-point"));
+	fpu.append(Atom(x));
+	fpu.append(Atom(y));
+	fpu = fpu.eval(env);
+	fpu.add_prop(sizeA, Expression(Atom(size)));
+	return fpu;
 }
 
 // this is a simple recursive version. the iterative version is more

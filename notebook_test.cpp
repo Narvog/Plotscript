@@ -712,11 +712,20 @@ int findPoints(QGraphicsScene * scene, QPointF center, qreal radius) {
 
 	QPainterPath selectPath;
 	selectPath.addRect(QRectF(center.x() - radius, center.y() - radius, 2 * radius, 2 * radius));
+	//qDebug() << selectPath.boundingRect() << "\n";
 	scene->setSelectionArea(selectPath, Qt::ContainsItemShape);
-
+	qDebug() << scene->selectionArea() << "\n";
+	auto list = scene->selectedItems();
+	std::size_t length = list.size();
+	qDebug() << length << "\n";
 	int numpoints(0);
 	foreach(auto item, scene->selectedItems()) {
+		//qDebug() << scene->selectedItems();
 		if (item->type() == QGraphicsEllipseItem::Type) {
+			auto test = qgraphicsitem_cast<QGraphicsEllipseItem *>(item);
+			qDebug() << test->rect().topLeft();
+			//qDebug() << item->sceneBoundingRect().center();
+			qDebug() << item->sceneBoundingRect().topLeft();
 			numpoints += 1;
 		}
 	}
@@ -769,6 +778,7 @@ int intersectsLine(QGraphicsScene * scene, QPointF center, qreal radius) {
 
 void NotebookTest::testDiscretePlotLayout()
 {
+	
 	std::string program = R"( 
 (discrete-plot (list (list -1 -1) (list 1 1)) 
     (list (list "title" "The Title") 
@@ -776,6 +786,11 @@ void NotebookTest::testDiscretePlotLayout()
           (list "ordinate-label" "Y Label") ))
 )";
 
+	/*
+	std::string program = R"( 
+(set-property "size" (.1) (make-point -10 10))
+)";
+*/
 	input->setPlainText(QString::fromStdString(program));
 	QTest::keyClick(input, Qt::Key_Return, Qt::ShiftModifier);
 
@@ -783,11 +798,10 @@ void NotebookTest::testDiscretePlotLayout()
 	QVERIFY2(view, "Could not find QGraphicsView as child of OutputWidget");
 
 	auto scene = view->scene();
-
 	// first check total number of items
 	// 8 lines + 2 points + 7 text = 17
 	auto items = scene->items();
-	//QCOMPARE(items.size(), 17);
+	QCOMPARE(items.size(), 17);
 
 	// make them all selectable
 	foreach(auto item, items) {
@@ -832,22 +846,25 @@ void NotebookTest::testDiscretePlotLayout()
 	QCOMPARE(findLines(scene, QRectF(xmin, -ymax, 20, 0), 0.1), 1);
 
 	// check the bounding box left and (-1, -1) stem
-	//QCOMPARE(findLines(scene, QRectF(xmin, -ymax, 0, 20), 0.1), 2);
+	QCOMPARE(findLines(scene, QRectF(xmin, -ymax, 0, 20), 0.1), 2);
 
 	// check the bounding box right and (1, 1) stem
-	//QCOMPARE(findLines(scene, QRectF(xmax, -ymax, 0, 20), 0.1), 2);
+	QCOMPARE(findLines(scene, QRectF(xmax, -ymax, 0, 20), 0.1), 2);
 
 	// check the abscissa axis
-	//QCOMPARE(findLines(scene, QRectF(xmin, 0, 20, 0), 0.1), 1);
+	QCOMPARE(findLines(scene, QRectF(xmin, 0, 20, 0), 0.1), 1);
 
 	// check the ordinate axis 
-	//QCOMPARE(findLines(scene, QRectF(0, -ymax, 0, 20), 0.1), 1);
+	QCOMPARE(findLines(scene, QRectF(0, -ymax, 0, 20), 0.1), 1);
 
+	//auto point = qgraphicsitem_cast<QGraphicsEllipseItem *>(scene->itemAt(QPointF(-10, 10), QTransform()));
+	//qDebug() << point->sceneBoundingRect().center() << "\n";
 	// check the point at (-1,-1)
-	//QCOMPARE(findPoints(scene, QPointF(-10, 10), 0.6), 1);
+	//QVERIFY(point->sceneBoundingRect().center() == QPointF(-10, 10));
+	QCOMPARE(findPoints(scene, QPointF(-10, 10), .7), 1);
 
 	// check the point at (1,1)
-	//QCOMPARE(findPoints(scene, QPointF(10, -10), 0.6), 1);
+	QCOMPARE(findPoints(scene, QPointF(10, -10), .8), 1);
 }
 
 
