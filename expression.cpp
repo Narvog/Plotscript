@@ -501,99 +501,10 @@ Expression Expression::handle_discplot(Environment & env)
 	thickness.setString();
 	m_head = list;
 	stage1 = eval(env);
-	resultb = make_box(env, N);
+	
 
 	if (stage1.rTail().size() > 0)
 	{
-
-		if (stage1.rTail().size() == 2)
-		{
-			Expression titles = stage1.rTail()[1];
-
-			if (titles.isLList())
-			{
-				//find text scale if applicable;
-				for (std::size_t i = 0; i < titles.rTail().size(); i++)
-				{
-					if (titles.rTail()[i].rTail().size() == 2)
-					{
-						if (titles.rTail()[i].rTail()[0].head().isString())
-						{
-							if (titles.rTail()[i].rTail()[0].head().asString() == "\"text-scale\"")
-							{
-								if (titles.rTail()[i].rTail()[1].isHeadNumber())
-								{
-									scale = titles.rTail()[i].rTail()[1].head().asNumber();
-								}
-							}
-						}
-					}
-					else
-					{
-						//error
-					}
-
-				}
-
-				Atom list("list");
-				Expression stage2(list);
-				for (std::size_t i = 0; i < titles.rTail().size(); i++)
-				{
-					if (titles.rTail()[i].rTail().size() == 2)
-					{
-						
-						if (titles.rTail()[i].rTail()[0].head().isString())
-						{
-							
-							if (titles.rTail()[i].rTail()[0].head().asString() == "\"title\"")
-							{
-								if (titles.rTail()[i].rTail()[1].head().isString())
-								{
-									areTitles = true;
-									Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), 0, -N, 0, -A, scale);
-									stage2.rTail().push_back(textO);
-								}
-							}
-							else if (titles.rTail()[i].rTail()[0].head().asString() == "\"abscissa-label\"")
-							{
-								if (titles.rTail()[i].rTail()[1].head().isString())
-								{
-									areTitles = true;
-									Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), 0, N, 0, A, scale);
-									stage2.rTail().push_back(textO);
-								}
-							}
-							else if (titles.rTail()[i].rTail()[0].head().asString() == "\"ordinate-label\"")
-							{
-								if (titles.rTail()[i].rTail()[1].head().isString())
-								{
-									areTitles = true;
-									Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), -N, 0, -B, 0, scale);
-									Atom rot("\"text-rotation\"");
-									rot.setString();
-									textO.add_prop(rot, Expression(Atom(std::atan2(0, -1) * -1 / 2)));
-									stage2.rTail().push_back(textO);
-								}
-							}
-						}
-					}
-					else
-					{
-						//error
-					}
-
-				}
-				if(areTitles)
-				{
-					resultTitles = stage2.eval(env);
-				}
-			}
-			else
-			{
-				//error
-			}
-		}
-
 		Expression points = stage1.rTail()[0];
 		if (points.rTail().size() > 0)
 		{
@@ -645,78 +556,169 @@ Expression Expression::handle_discplot(Environment & env)
 					//error
 				}
 			}
+
+
+
+
+
+
+
+			double midX = (maxX + minX) / 2;
+			double midY = (maxY + minY) / 2;
+
+			double scaleX = (N / (maxX - minX));
+			double scaleY = -1 * (N / (maxY - minY));
 			
-			resultTM = make_pos_labels(env, N, C, D, scale, minX, maxX, minY, maxY);
 
+			if (stage1.rTail().size() == 2)
+			{
+				Expression titles = stage1.rTail()[1];
 
+				if (titles.isLList())
+				{
+					//find text scale if applicable;
+					for (std::size_t i = 0; i < titles.rTail().size(); i++)
+					{
+						if (titles.rTail()[i].rTail().size() == 2)
+						{
+							if (titles.rTail()[i].rTail()[0].head().isString())
+							{
+								if (titles.rTail()[i].rTail()[0].head().asString() == "\"text-scale\"")
+								{
+									if (titles.rTail()[i].rTail()[1].isHeadNumber())
+									{
+										scale = titles.rTail()[i].rTail()[1].head().asNumber();
+									}
+								}
+							}
+						}
+						else
+						{
+							//error
+						}
 
+					}
 
+					Atom list("list");
+					Expression stage2(list);
+					for (std::size_t i = 0; i < titles.rTail().size(); i++)
+					{
+						if (titles.rTail()[i].rTail().size() == 2)
+						{
 
-			double midX = (maxX + minX)/2;
-			double midY = (maxY + minY)/2;
+							if (titles.rTail()[i].rTail()[0].head().isString())
+							{
 
-			double scaleX = (N / abs(maxX - minX));
-			double scaleY = -1*(N / abs(maxY - minY));
-			double Xaxis = minY;
+								if (titles.rTail()[i].rTail()[0].head().asString() == "\"title\"")
+								{
+									if (titles.rTail()[i].rTail()[1].head().isString())
+									{
+										areTitles = true;
+										Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), midX * scaleX, maxY * scaleY, 0, -A, scale);
+										stage2.rTail().push_back(textO);
+									}
+								}
+								else if (titles.rTail()[i].rTail()[0].head().asString() == "\"abscissa-label\"")
+								{
+									if (titles.rTail()[i].rTail()[1].head().isString())
+									{
+										areTitles = true;
+										Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), midX * scaleX, minY * scaleY, 0, A, scale);
+										stage2.rTail().push_back(textO);
+									}
+								}
+								else if (titles.rTail()[i].rTail()[0].head().asString() == "\"ordinate-label\"")
+								{
+									if (titles.rTail()[i].rTail()[1].head().isString())
+									{
+										areTitles = true;
+										Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), minX * scaleX, midY * scaleY, -B, 0, scale);
+										Atom rot("\"text-rotation\"");
+										rot.setString();
+										textO.add_prop(rot, Expression(Atom(std::atan2(0, -1) * -1 / 2)));
+										stage2.rTail().push_back(textO);
+									}
+								}
+							}
+						}
+						else
+						{
+							//error
+						}
+
+					}
+					if (areTitles)
+					{
+						resultTitles = stage2.eval(env);
+					}
+				}
+				else
+				{
+					//error
+				}
+			}
+
+			resultb = make_box(env, minX * scaleX, minY * scaleY, maxX * scaleX, maxY * scaleY);
+
+			resultTM = make_pos_labels(env, D, C, scale, minX, maxX, minY, maxY, scaleX, scaleY);
+
+			double Xaxis = minY*scaleY;
 			double Yaxis = minX;
 			bool hasXaxis = false;
-			
+
 			Expression stage2(list);
 			if (minY < 0 && maxY > 0)
 			{
-				hasAxes = true;
-				hasXaxis = true;
-				Xaxis = -midY * scaleY;
-				Expression XA = helper_make_line(env, -N / 2, Xaxis, N / 2, Xaxis, 0);
-				stage2.rTail().push_back(XA);
+			hasAxes = true;
+			hasXaxis = true;
+			Xaxis = 0;
+			Expression XA = helper_make_line(env, maxX * scaleX, Xaxis, minX * scaleX, Xaxis, 0);
+			stage2.rTail().push_back(XA);
 			}
 
 			if (minX < 0 && maxX > 0)
 			{
-				hasAxes = true;
-				Yaxis = -midX * scaleX;
-				Expression YA = helper_make_line(env, Yaxis, -N/2, Yaxis, N/2, 0);
-				stage2.rTail().push_back(YA);
+			hasAxes = true;
+			Yaxis = 0;
+			Expression YA = helper_make_line(env, Yaxis, maxY * scaleY, Yaxis, minY * scaleY, 0);
+			stage2.rTail().push_back(YA);
 			}
+
 			if (hasAxes)
 			{
-				resultAxes = stage2.eval(env);
-			}
-			if(!hasXaxis)
-			{
-				Xaxis = (Xaxis -midY) * scaleY;
+			resultAxes = stage2.eval(env);
 			}
 
 			Expression stage3(list);
 			for (size_t i = 0; i < points.rTail().size(); i++)
 			{
-				double x;
-				double y;
-				Expression point = points.rTail()[i];
-				if (point.rTail().size() == 2)
-				{
-					if (point.rTail()[0].isHeadNumber())
-					{
-						x = ((point.rTail()[0].head().asNumber() - midX) * scaleX);
-					}
-					else
-					{
-						//error
-					}
+			double x;
+			double y;
+			Expression point = points.rTail()[i];
+			if (point.rTail().size() == 2)
+			{
+			if (point.rTail()[0].isHeadNumber())
+			{
+			x = ((point.rTail()[0].head().asNumber()) * scaleX);
+			}
+			else
+			{
+			//error
+			}
 
-					if (point.rTail()[1].isHeadNumber())
-					{
-						y = ((point.rTail()[1].head().asNumber() - midY) * scaleY);
-					}
-					else
-					{
-						//error
-					}
-				}
-				Expression dot = helper_make_point(env, x, y, P);
-				Expression line = helper_make_line(env, x, y, x, Xaxis, 0);
-				stage3.rTail().push_back(dot);
-				stage3.rTail().push_back(line);
+			if (point.rTail()[1].isHeadNumber())
+			{
+			y = ((point.rTail()[1].head().asNumber()) * scaleY);
+			}
+			else
+			{
+			//error
+			}
+			}
+			Expression dot = helper_make_point(env, x, y, P);
+			Expression line = helper_make_line(env, x, y, x, Xaxis, 0);
+			stage3.rTail().push_back(dot);
+			stage3.rTail().push_back(line);
 			}
 			resultplot = stage3.eval(env);
 		}
@@ -726,17 +728,21 @@ Expression Expression::handle_discplot(Environment & env)
 		}
 
 
+		
+
 	}
 	else
 	{
 		//error
 	}
+	
 	Expression join1(Atom("join"));
 	join1.rTail().emplace_back(resultb);
 	join1.rTail().emplace_back(resultTM);
 	Expression result1 = join1.eval(env);
-
+	
 	//implement join2 here
+	
 	if (hasAxes)
 	{
 		Expression join2(Atom("join"));
@@ -744,13 +750,11 @@ Expression Expression::handle_discplot(Environment & env)
 		join2.rTail().emplace_back(resultAxes);
 		result1 = join2.eval(env);
 	}
-
 	//implement join3 here
 	Expression join3(Atom("join"));
 	join3.rTail().push_back(result1);
 	join3.rTail().emplace_back(resultplot);
 	Expression result2 = join3.eval(env);
-
 	if (!areTitles)
 	{
 		return result2;
@@ -765,29 +769,29 @@ Expression Expression::handle_discplot(Environment & env)
 	return resultf;
 }
 
-Expression Expression::make_box(Environment & env, const double N)
+Expression Expression::make_box(Environment & env, const double minX, const double minY, const double maxX, const double maxY)
 {
 	Expression resultb;
 	Atom list("list");
 	
 	Expression stage2(list);
-	Expression boxu = helper_make_line(env, (-N / 2), (-N / 2), (N / 2), (-N / 2), 0);
+	Expression boxu = helper_make_line(env, minX, maxY, maxX, maxY, 0);
 	stage2.rTail().push_back(boxu);
 
-	Expression boxd = helper_make_line(env, (N / 2), (N / 2), (-N / 2), (N / 2), 0);
+	Expression boxd = helper_make_line(env, minX, minY, maxX, minY, 0);
 	stage2.rTail().push_back(boxd);
 
-	Expression boxr = helper_make_line(env, (N / 2), (-N / 2), (N / 2), (N / 2), 0);
+	Expression boxr = helper_make_line(env, maxX, maxY, maxX, minY, 0);
 	stage2.rTail().push_back(boxr);
 
-	Expression boxl = helper_make_line(env, (-N / 2), (-N / 2), (-N / 2), (N / 2), 0);
+	Expression boxl = helper_make_line(env, minX, minY, minX, maxY, 0);
 	stage2.rTail().push_back(boxl);
 
 	resultb = stage2.eval(env);
 	return resultb;
 }
 
-Expression Expression::make_pos_labels(Environment & env, const double N, const double C, const double D, const double scale, const double minX, const double maxX, const double minY, const double maxY)
+Expression Expression::make_pos_labels(Environment & env, const double C, const double D, const double scale, const double minX, const double maxX, const double minY, const double maxY, const double Xscale, const double Yscale)
 {
 	Atom list("list");
 	Expression stage2(list);
@@ -795,28 +799,28 @@ Expression Expression::make_pos_labels(Environment & env, const double N, const 
 	std::stringstream stream;
 	stream << "\"" << std::setprecision(2) << maxY << "\"";
 	stream >> textConOU;
-	Expression OUF = helper_make_text(env, textConOU, -N, -N, -D, 0, scale);
+	Expression OUF = helper_make_text(env, textConOU, minX * Xscale, maxY * Yscale, -D, 0, scale);
 	stage2.rTail().push_back(OUF);
 
 	stream.clear();
 	std::string textConOL;
 	stream << "\"" << std::setprecision(2) << minY << "\"";
 	stream >> textConOL;
-	Expression OLF = helper_make_text(env, textConOL, -N, N, -D, 0, scale);	
+	Expression OLF = helper_make_text(env, textConOL, minX * Xscale, minY * Yscale, -D, 0, scale);	
 	stage2.rTail().push_back(OLF);
 
 	stream.clear();
 	std::string textConAL;
 	stream << "\"" << std::setprecision(2) << minX << "\"";
 	stream >> textConAL;
-	Expression ALF = helper_make_text(env, textConAL, -N, N, 0, C, scale);
+	Expression ALF = helper_make_text(env, textConAL, minX * Xscale, minY * Yscale, 0, C, scale);
 	stage2.rTail().push_back(ALF);
 
 	stream.clear();
 	std::string textConAU;
 	stream << "\"" << std::setprecision(2) << maxX << "\"";
 	stream >> textConAU;
-	Expression AUF = helper_make_text(env, textConAU, N, N, 0, C, scale);
+	Expression AUF = helper_make_text(env, textConAU, maxX * Xscale, minY * Yscale, 0, C, scale);
 	stage2.rTail().push_back(AUF);
 	Expression resultTM = stage2.eval(env);
 	return resultTM;
@@ -838,7 +842,7 @@ Expression Expression::helper_make_text(Environment & env, const std::string con
 
 	Expression OUF = OU.eval(env);
 
-	Expression OUpos = helper_make_point(env, ((XN/2)+X), ((YN/2)+Y), 0);
+	Expression OUpos = helper_make_point(env, ((XN)+X), ((YN)+Y), 0);
 
 	Atom scaleT("\"text-scale\"");
 	scaleT.setString();

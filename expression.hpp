@@ -123,8 +123,8 @@ private:
   Expression handle_setprop(Environment & env);
   Expression handle_getprop(Environment & env);
   Expression handle_discplot(Environment & env);
-  Expression make_box(Environment & env, const double N);
-  Expression make_pos_labels(Environment & env, const double N, const double C, const double D, const double scale, const double minX, const double maxX, const double minY, const double maxY);
+  Expression make_box(Environment & env, const double minX, const double minY, const double maxX, const double maxY);
+  Expression make_pos_labels(Environment & env, const double C, const double D, const double scale, const double minX, const double maxX, const double minY, const double maxY, const double Xscale, const double Yscale);
   Expression helper_make_text(Environment & env, const std::string cont, const double XN, const double YN, const double X, const double Y, const double scale);
   Expression helper_make_line(Environment & env, const double x1, const double y1, const double x2, const double y2, const double thickness);
   Expression helper_make_point(Environment & env, const double x, const double y, const double size);
