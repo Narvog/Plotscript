@@ -850,10 +850,7 @@ void NotebookTest::testDiscretePlotLayout()
 	// check the ordinate axis 
 	QCOMPARE(findLines(scene, QRectF(0, -ymax, 0, 20), 0.1), 1);
 
-	//auto point = qgraphicsitem_cast<QGraphicsEllipseItem *>(scene->itemAt(QPointF(-10, 10), QTransform()));
-	//qDebug() << point->sceneBoundingRect().center() << "\n";
 	// check the point at (-1,-1)
-	//QVERIFY(point->sceneBoundingRect().center() == QPointF(-10, 10));
 	QCOMPARE(findPoints(scene, QPointF(-10, 10), .6), 1);
 
 	// check the point at (1,1)
