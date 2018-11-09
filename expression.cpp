@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <list>
+#include <iomanip>
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
@@ -483,7 +484,7 @@ Expression Expression::handle_discplot(Environment & env)
 	double C = 2;
 	double D = 2;
 	//test change should be set to 0.5 but is 0.1 to prove a point with 0.1 turns up clear for some reason.
-	double P = 0.1;
+	double P = 0.5;
 	double scale = 1;
 
 	Expression resultf;
@@ -791,23 +792,30 @@ Expression Expression::make_pos_labels(Environment & env, const double N, const 
 	Atom list("list");
 	Expression stage2(list);
 	std::string textConOU;
-	textConOU = "\"" + std::to_string((int)std::round(maxY)) + "\"";
+	std::stringstream stream;
+	stream << "\"" << std::setprecision(2) << maxY << "\"";
+	stream >> textConOU;
 	Expression OUF = helper_make_text(env, textConOU, -N, -N, -D, 0, scale);
 	stage2.rTail().push_back(OUF);
 
-
+	stream.clear();
 	std::string textConOL;
-	textConOL = "\"" + std::to_string((int)std::round(minY)) + "\"";
+	stream << "\"" << std::setprecision(2) << minY << "\"";
+	stream >> textConOL;
 	Expression OLF = helper_make_text(env, textConOL, -N, N, -D, 0, scale);	
 	stage2.rTail().push_back(OLF);
 
+	stream.clear();
 	std::string textConAL;
-	textConAL = "\"" + std::to_string((int)std::round(minX)) + "\"";
+	stream << "\"" << std::setprecision(2) << minX << "\"";
+	stream >> textConAL;
 	Expression ALF = helper_make_text(env, textConAL, -N, N, 0, C, scale);
 	stage2.rTail().push_back(ALF);
 
+	stream.clear();
 	std::string textConAU;
-	textConAU = "\"" + std::to_string((int)std::round(maxX)) + "\"";
+	stream << "\"" << std::setprecision(2) << maxX << "\"";
+	stream >> textConAU;
 	Expression AUF = helper_make_text(env, textConAU, N, N, 0, C, scale);
 	stage2.rTail().push_back(AUF);
 	Expression resultTM = stage2.eval(env);

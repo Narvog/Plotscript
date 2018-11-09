@@ -172,7 +172,6 @@ void NotebookTest::Test7()
 	auto ellipse = list.at(0);
 	auto ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 20.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0,0)), "Ellipse found at wrong coordinates");
 }
@@ -191,42 +190,36 @@ void NotebookTest::Test8()
 	auto ellipse = list.at(5);
 	auto ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 1.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0, 0)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(4);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 2.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(4, 0)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(3);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 4.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(8, 0)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(2);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 8.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(16, 0)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(1);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 16.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(32, 0)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(0);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 32.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(64, 0)), "Ellipse found at wrong coordinates");
 }
@@ -245,42 +238,36 @@ void NotebookTest::Test9()
 	auto ellipse = list.at(5);
 	auto ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 1.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0, 0)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(4);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 2.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0, 4)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(3);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 4.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0, 8)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(2);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 8.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0, 16)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(1);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 16.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0, 32)), "Ellipse found at wrong coordinates");
 
 	ellipse = list.at(0);
 	ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
-	QVERIFY2(ellipseL->brush() == QBrush(QColor(0, 0, 0), Qt::BrushStyle(Qt::SolidPattern)), "Ellipse is wrong color");
 	QVERIFY2((ellipseL->rect().height() == 32.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0, 64)), "Ellipse found at wrong coordinates");
 }

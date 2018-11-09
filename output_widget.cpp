@@ -91,6 +91,12 @@ void OutputWidget::helperOut(Expression exp)
 						//qDebug() << dot->sceneBoundingRect().bottomLeft() << "\n";
 						//qDebug() << dot->sceneBoundingRect().bottomRight() << "\n";
 						//dot->setPos((xloc - (size / 2)), (yloc - (size / 2)));
+
+						//dot->
+						QPen * pen = new QPen(QColor(0, 0, 0));
+						pen->setStyle(Qt::PenStyle(Qt::SolidPattern));
+						pen->setWidth(0);
+						dot->setPen(*pen);
 						dot->setBrush(QBrush(QColor(0,0,0), Qt::BrushStyle(Qt::SolidPattern)));
 						gScene->addItem(dot);
 
