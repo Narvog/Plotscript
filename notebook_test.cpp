@@ -717,15 +717,21 @@ int findPoints(QGraphicsScene * scene, QPointF center, qreal radius) {
 	qDebug() << scene->selectionArea() << "\n";
 	auto list = scene->selectedItems();
 	std::size_t length = list.size();
-	qDebug() << length << "\n";
+	//qDebug() << length << "\n";
 	int numpoints(0);
 	foreach(auto item, scene->selectedItems()) {
 		//qDebug() << scene->selectedItems();
 		if (item->type() == QGraphicsEllipseItem::Type) {
 			auto test = qgraphicsitem_cast<QGraphicsEllipseItem *>(item);
-			qDebug() << test->rect().topLeft();
-			//qDebug() << item->sceneBoundingRect().center();
-			qDebug() << item->sceneBoundingRect().topLeft();
+			qDebug() << "rect top left: " << test->rect().topLeft();
+			qDebug() << "rect top right: " << test->rect().topRight();
+			qDebug() << "rect bottom left: " << test->rect().bottomLeft();
+			qDebug() << "rect bottom right: " << test->rect().bottomRight() << "\n";
+
+			qDebug() << "scene bounding rect top left: " << item->sceneBoundingRect().topLeft();
+			qDebug() << "scene bounding rect top right: " << item->sceneBoundingRect().topRight();
+			qDebug() << "scene bounding rect bottom left: " << item->sceneBoundingRect().bottomLeft();
+			qDebug() << "scene bounding rect bottom right: " << item->sceneBoundingRect().bottomRight() << "\n";
 			numpoints += 1;
 		}
 	}
@@ -861,10 +867,10 @@ void NotebookTest::testDiscretePlotLayout()
 	//qDebug() << point->sceneBoundingRect().center() << "\n";
 	// check the point at (-1,-1)
 	//QVERIFY(point->sceneBoundingRect().center() == QPointF(-10, 10));
-	QCOMPARE(findPoints(scene, QPointF(-10, 10), .7), 1);
+	QCOMPARE(findPoints(scene, QPointF(-10, 10), .6), 1);
 
 	// check the point at (1,1)
-	QCOMPARE(findPoints(scene, QPointF(10, -10), .8), 1);
+	QCOMPARE(findPoints(scene, QPointF(10, -10), .6), 1);
 }
 
 

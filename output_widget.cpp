@@ -23,7 +23,7 @@ void OutputWidget::recievedData(QString info)
 void OutputWidget::resizeEvent(QResizeEvent * ev)
 {
 	//qDebug() << "resize Event Caught!";
-	//gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
+	gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
 	//auto resize = ev;
 	//QWidget::resizeEvent(ev);
 }
@@ -32,12 +32,12 @@ void OutputWidget::recievedExp(Expression exp)
 {
 	gScene->clear();
 	helperOut(exp);
-	//gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
+	gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void OutputWidget::helperOut(Expression exp)
 {
-	//gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
+	gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
 	if (exp.head().isNone())
 	{
 		if (exp.isLList())
@@ -78,18 +78,18 @@ void OutputWidget::helperOut(Expression exp)
 					}
 					if (size >= 0)
 					{
-						QGraphicsEllipseItem * dot = new QGraphicsEllipseItem;//((xloc - (size / 2)), (yloc - (size / 2)), size, size);
-						auto rect = QRectF(QPointF((xloc - (size / 2)), (yloc - (size / 2))), QPointF((xloc + (size / 2)), (yloc + (size / 2))));
-						qDebug() << rect.topLeft() << "\n";
-						qDebug() << rect.topRight() << "\n";
-						qDebug() << rect.bottomLeft() << "\n";
-						qDebug() << rect.bottomRight() << "\n\n";
-						dot->setRect(rect);
+						QGraphicsEllipseItem * dot = new QGraphicsEllipseItem((xloc - (size / 2)), (yloc - (size / 2)), size, size);
+						//auto rect = QRectF(QPointF((xloc - (size / 2)), (yloc - (size / 2))), QPointF((xloc + (size / 2)), (yloc + (size / 2))));
+						//qDebug() << rect.topLeft() << "\n";
+						//qDebug() << rect.topRight() << "\n";
+						//qDebug() << rect.bottomLeft() << "\n";
+						//qDebug() << rect.bottomRight() << "\n\n";
+						//dot->setRect(rect);
 						//dot->scene
-						qDebug() << dot->sceneBoundingRect().topLeft() << "\n";
-						qDebug() << dot->sceneBoundingRect().topRight() << "\n";
-						qDebug() << dot->sceneBoundingRect().bottomLeft() << "\n";
-						qDebug() << dot->sceneBoundingRect().bottomRight() << "\n";
+						//qDebug() << dot->sceneBoundingRect().topLeft() << "\n";
+						//qDebug() << dot->sceneBoundingRect().topRight() << "\n";
+						//qDebug() << dot->sceneBoundingRect().bottomLeft() << "\n";
+						//qDebug() << dot->sceneBoundingRect().bottomRight() << "\n";
 						//dot->setPos((xloc - (size / 2)), (yloc - (size / 2)));
 						dot->setBrush(QBrush(QColor(0,0,0), Qt::BrushStyle(Qt::SolidPattern)));
 						gScene->addItem(dot);

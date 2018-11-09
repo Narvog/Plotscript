@@ -409,7 +409,7 @@ Expression Expression::handle_map(Environment & env)
 					std::string output = "Error: during map: " + t;
 					throw SemanticError(output);
 				}
-				resultf.append(result1.head());
+				resultf.rTail().emplace_back(result1);
 				resultf.setLList(true);
 			}
 		}
@@ -482,7 +482,7 @@ Expression Expression::handle_discplot(Environment & env)
 	double B = 3;
 	double C = 2;
 	double D = 2;
-	//test change should be set to 0.5 but is 0.1 to prove a point
+	//test change should be set to 0.5 but is 0.1 to prove a point with 0.1 turns up clear for some reason.
 	double P = 0.1;
 	double scale = 1;
 
@@ -654,8 +654,8 @@ Expression Expression::handle_discplot(Environment & env)
 			double midX = (maxX + minX)/2;
 			double midY = (maxY + minY)/2;
 
-			double scaleX = (N / (abs(maxX) + abs(minX)));
-			double scaleY = -1*(N / (abs(maxY) + abs(minY)));
+			double scaleX = (N / abs(maxX - minX));
+			double scaleY = -1*(N / abs(maxY - minY));
 			double Xaxis = minY;
 			double Yaxis = minX;
 			bool hasXaxis = false;
@@ -680,6 +680,10 @@ Expression Expression::handle_discplot(Environment & env)
 			if (hasAxes)
 			{
 				resultAxes = stage2.eval(env);
+			}
+			if(!hasXaxis)
+			{
+				Xaxis = (Xaxis -midY) * scaleY;
 			}
 
 			Expression stage3(list);
