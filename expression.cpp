@@ -482,7 +482,8 @@ Expression Expression::handle_discplot(Environment & env)
 	double B = 3;
 	double C = 2;
 	double D = 2;
-	double P = 0.5;
+	//test change should be set to 0.5 but is 0.1 to prove a point
+	double P = 0.1;
 	double scale = 1;
 
 	Expression resultf;
