@@ -818,10 +818,12 @@ Expression Expression::handle_contplot(Environment & env)
 				std::string segd;
 				stream >> segd;
 				double seg2 = std::stod(segd, nullptr);
-				double seg3 = 0.08;
+				double segh1 = seg * 1000;
+				int segh2 = (int)segh1;
+				double seg3 = (double)(segh2/1000.0);
 				stage2.append(Atom(b1));
 				stage2.append(Atom(b2));
-				stage2.append(Atom(seg2));
+				stage2.append(Atom(seg));
 
 				stage3.rTail().emplace_back(func);
 
@@ -853,10 +855,7 @@ Expression Expression::handle_contplot(Environment & env)
 
 						double x3 = Xcord.rTail()[j+1].head().asNumber();
 						double y3 = Ycord.rTail()[j+1].head().asNumber();
-						if (z == 9)
-						{
-							z = 9;
-						}
+
 						if (checkline(x1, y1, x2, y2, x3, y3))
 						{
 							if (nextX.rTail().empty())

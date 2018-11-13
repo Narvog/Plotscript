@@ -716,15 +716,15 @@ int findPoints(QGraphicsScene * scene, QPointF center, qreal radius) {
 		//qDebug() << scene->selectedItems();
 		if (item->type() == QGraphicsEllipseItem::Type) {
 			auto test = qgraphicsitem_cast<QGraphicsEllipseItem *>(item);
-			qDebug() << "rect top left: " << test->rect().topLeft();
-			qDebug() << "rect top right: " << test->rect().topRight();
-			qDebug() << "rect bottom left: " << test->rect().bottomLeft();
-			qDebug() << "rect bottom right: " << test->rect().bottomRight() << "\n";
+			//qDebug() << "rect top left: " << test->rect().topLeft();
+			//qDebug() << "rect top right: " << test->rect().topRight();
+			//qDebug() << "rect bottom left: " << test->rect().bottomLeft();
+			//qDebug() << "rect bottom right: " << test->rect().bottomRight() << "\n";
 
-			qDebug() << "scene bounding rect top left: " << item->sceneBoundingRect().topLeft();
-			qDebug() << "scene bounding rect top right: " << item->sceneBoundingRect().topRight();
-			qDebug() << "scene bounding rect bottom left: " << item->sceneBoundingRect().bottomLeft();
-			qDebug() << "scene bounding rect bottom right: " << item->sceneBoundingRect().bottomRight() << "\n";
+			//qDebug() << "scene bounding rect top left: " << item->sceneBoundingRect().topLeft();
+			//qDebug() << "scene bounding rect top right: " << item->sceneBoundingRect().topRight();
+			//qDebug() << "scene bounding rect bottom left: " << item->sceneBoundingRect().bottomLeft();
+			//qDebug() << "scene bounding rect bottom right: " << item->sceneBoundingRect().bottomRight() << "\n";
 			numpoints += 1;
 		}
 	}
@@ -883,6 +883,7 @@ void NotebookTest::Test24()
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
 
+
 }
 
 void NotebookTest::Test25()
@@ -901,6 +902,42 @@ void NotebookTest::Test25()
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
 
+	double scalex = 20.0 / (2.0*std::atan2(0, -1));
+	double scaley = 20.0 / (2.0);
+
+	double xmin = scalex*-1*std::atan2(0, -1);
+	double xmax = scalex * std::atan2(0, -1);
+	double ymin = scaley*-1;
+	double ymax = scaley * 1;
+	double xmiddle = (xmax + xmin) / 2;
+	double ymiddle = (ymax + ymin) / 2;
+
+	// check abscissa min label
+	//QCOMPARE(findText(scene, QPointF(xmin, -(ymin - 2)), 0, QString("-3.1")), 1);
+
+	// check abscissa max label
+	//QCOMPARE(findText(scene, QPointF(xmax, -(ymin - 2)), 0, QString("3.1")), 1);
+
+	// check ordinate min label
+	//QCOMPARE(findText(scene, QPointF(xmin - 2, -ymin), 0, QString("-1")), 1);
+
+	// check ordinate max label
+	//QCOMPARE(findText(scene, QPointF(xmin - 2, -ymax), 0, QString("1")), 1);
+
+	// check the bounding box bottom
+	//qDebug() << scene->itemAt(QPointF(10, -10), QTransform());
+	auto items = scene->items();
+	qDebug() << items;
+	QCOMPARE(findLines(scene, QRectF(xmin, -ymin, 20, 0), 0.1), 1);
+
+	// check the bounding box top
+	QCOMPARE(findLines(scene, QRectF(xmin, -ymax, 20, 0), 0.1), 1);
+
+	// check the bounding box left
+	QCOMPARE(findLines(scene, QRectF(xmin, -ymax, 0, 20), 0.1), 1);
+
+	// check the bounding box right
+	QCOMPARE(findLines(scene, QRectF(xmax, -ymax, 0, 20), 0.1), 1);
 }
 
 void NotebookTest::Test26()
