@@ -636,6 +636,10 @@ Expression Lrange(const std::vector<Expression> & args) {
 						result.rTail().push_back(Expression(num));
 						num += args[2].head().asNumber();
 					}
+					if (Expression(num) == args[1])
+					{
+						result.rTail().push_back(Expression(num));
+					}
 					result.setLList(true);
 				}
 				else

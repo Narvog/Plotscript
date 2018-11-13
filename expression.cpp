@@ -769,6 +769,387 @@ Expression Expression::handle_discplot(Environment & env)
 	return resultf;
 }
 
+Expression Expression::handle_contplot(Environment & env)
+{
+	double N = 20;
+	double A = 3;
+	double B = 3;
+	double C = 2;
+	double D = 2;
+	double P = 0.5;
+	double scale = 1;
+	bool areTitles = false;
+	bool hasAxes = false;
+
+	Expression resultdata;
+	Expression stage1;
+	Expression func;
+
+	Expression resultb;
+	Expression resultTM;
+	Expression resultTitles;
+	Expression resultAxes;
+	Expression resultplot;
+
+	Expression resultf;
+
+	Atom range("range");
+	Expression stage2(range);
+
+	Atom map("map");
+	Expression stage3(map);
+
+	Atom list("list");
+
+
+	if (rTail().size() > 2)
+	{
+		func = rTail()[0];
+		stage1 = rTail()[1].eval(env);
+			if (stage1.rTail()[0].isHeadNumber() && stage1.rTail()[1].isHeadNumber())
+			{
+				double b1 = stage1.rTail()[0].head().asNumber();
+				double b2 = stage1.rTail()[1].head().asNumber();
+				double dist = b2 - b1;
+				double seg = dist / 50;
+
+				std::stringstream stream;
+				stream << std::setprecision(4) << seg;
+				std::string segd;
+				stream >> segd;
+				double seg2 = std::stod(segd, nullptr);
+				double seg3 = 0.08;
+				stage2.append(Atom(b1));
+				stage2.append(Atom(b2));
+				stage2.append(Atom(seg2));
+
+				stage3.rTail().emplace_back(func);
+
+				Expression Xcord = stage2.eval(env);
+
+				stage3.rTail().emplace_back(Xcord);
+				Expression Ycord = stage3.eval(env);
+
+				for (int i = 0; i < 9; i++)
+				{
+					Expression nextX(list);
+					Expression nextY(map);
+					nextY.rTail().push_back(func);
+					int z = 0;
+					std::size_t max = Xcord.rTail().size();
+					for (size_t j = 1; j < Xcord.rTail().size() - 1; j++)
+					{
+						z++;
+						double x1 = Xcord.rTail()[j-1].head().asNumber();
+						double y1 = Ycord.rTail()[j-1].head().asNumber();
+
+						double x2 = Xcord.rTail()[j].head().asNumber();
+						double y2 = Ycord.rTail()[j].head().asNumber();
+
+						double x3 = Xcord.rTail()[j+1].head().asNumber();
+						double y3 = Ycord.rTail()[j+1].head().asNumber();
+
+						if (checkline(x1, y1, x2, y2, x3, y3))
+						{
+							if (nextX.rTail().empty())
+							{
+								nextX.rTail().emplace_back(Expression(x1));
+							}
+							else
+							{
+								if (!(nextX.rTail()[j - 2] == Expression(x1)))
+								{
+									nextX.rTail().emplace_back(Expression(x1));
+								}
+								if (j == max - 2)
+								{
+									nextX.rTail().emplace_back(Expression(x2));
+									nextX.rTail().emplace_back(Expression(x3));
+								}
+							}
+						}
+						else
+						{
+							double midx1 = (x2 + x1) / 2;
+							double midx2 = (x3 + x2) / 2;
+							if (nextX.rTail().empty())
+							{
+								nextX.rTail().emplace_back(Expression(x1));
+								nextX.rTail().emplace_back(Expression(midx1));
+								nextX.rTail().emplace_back(Expression(x2));
+								nextX.rTail().emplace_back(Expression(midx2));
+							}
+							else
+							{
+								if (!(nextX.rTail()[j - 2] == Expression(x1)))
+								{
+									nextX.rTail().emplace_back(Expression(x1));
+									nextX.rTail().emplace_back(Expression(midx1));
+									nextX.rTail().emplace_back(Expression(x2));
+									nextX.rTail().emplace_back(Expression(midx2));
+								}
+								else
+								{
+									nextX.rTail().emplace_back(Expression(x2));
+									nextX.rTail().emplace_back(Expression(midx2));
+								}
+
+								if (j == max - 2)
+								{
+									nextX.rTail().emplace_back(Expression(x3));
+								}
+							}
+							
+							
+						}
+					}
+					nextX = nextX.eval(env);
+					if (nextX.rTail().size() > Xcord.rTail().size())
+					{
+						Xcord = nextX;
+						nextY.rTail().push_back(Xcord);
+						Ycord = nextY.eval(env);
+					}
+					else
+					{
+						break;
+					}
+				}
+
+				std::size_t numpoints = Xcord.rTail().size();
+
+				double maxX = -10000;
+				double minX = 100000;
+				double maxY = -10000;
+				double minY = 100000;
+
+				for (size_t i = 0; i < numpoints; i++)
+				{
+					if (Xcord.rTail()[i].head().asNumber() > maxX)
+					{
+						maxX = Xcord.rTail()[i].head().asNumber();
+					}
+					if (Xcord.rTail()[i].head().asNumber() < minX)
+					{
+						minX = Xcord.rTail()[i].head().asNumber();
+					}
+				}
+
+				for (size_t i = 0; i < numpoints; i++)
+				{
+					if (Ycord.rTail()[i].head().asNumber() > maxY)
+					{
+						maxY = Ycord.rTail()[i].head().asNumber();
+					}
+					if (Ycord.rTail()[i].head().asNumber() < minY)
+					{
+						minY = Ycord.rTail()[i].head().asNumber();
+					}
+				}
+
+				double midX = (maxX + minX) / 2;
+				double midY = (maxY + minY) / 2;
+
+				double scaleX = (N / (maxX - minX));
+				double scaleY = -1 * (N / (maxY - minY));
+
+				resultb = make_box(env, minX * scaleX, minY * scaleY, maxX * scaleX, maxY * scaleY);
+
+				resultTM = make_pos_labels(env, D, C, scale, minX, maxX, minY, maxY, scaleX, scaleY);
+
+				if (rTail().size() == 3)
+				{
+					Expression t1(list);
+					for (std::size_t i = 0; i < rTail()[2].rTail().size(); i++)
+					{
+						t1.rTail().push_back(rTail()[2].rTail()[i]);
+					}
+					Expression titles = t1.eval(env);
+
+					if (titles.isLList())
+					{
+						//find text scale if applicable;
+						for (std::size_t i = 0; i < titles.rTail().size(); i++)
+						{
+							if (titles.rTail()[i].rTail().size() == 2)
+							{
+								if (titles.rTail()[i].rTail()[0].head().isString())
+								{
+									if (titles.rTail()[i].rTail()[0].head().asString() == "\"text-scale\"")
+									{
+										if (titles.rTail()[i].rTail()[1].isHeadNumber())
+										{
+											scale = titles.rTail()[i].rTail()[1].head().asNumber();
+										}
+									}
+								}
+							}
+							else
+							{
+								//error
+							}
+
+						}
+
+						Atom list("list");
+						Expression stage4(list);
+						for (std::size_t i = 0; i < titles.rTail().size(); i++)
+						{
+							if (titles.rTail()[i].rTail().size() == 2)
+							{
+
+								if (titles.rTail()[i].rTail()[0].head().isString())
+								{
+
+									if (titles.rTail()[i].rTail()[0].head().asString() == "\"title\"")
+									{
+										if (titles.rTail()[i].rTail()[1].head().isString())
+										{
+											areTitles = true;
+											Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), midX * scaleX, maxY * scaleY, 0, -A, scale);
+											stage4.rTail().push_back(textO);
+										}
+									}
+									else if (titles.rTail()[i].rTail()[0].head().asString() == "\"abscissa-label\"")
+									{
+										if (titles.rTail()[i].rTail()[1].head().isString())
+										{
+											areTitles = true;
+											Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), midX * scaleX, minY * scaleY, 0, A, scale);
+											stage4.rTail().push_back(textO);
+										}
+									}
+									else if (titles.rTail()[i].rTail()[0].head().asString() == "\"ordinate-label\"")
+									{
+										if (titles.rTail()[i].rTail()[1].head().isString())
+										{
+											areTitles = true;
+											Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), minX * scaleX, midY * scaleY, -B, 0, scale);
+											//Atom rot("\"text-rotation\"");
+											//rot.setString();
+											//textO.add_prop(rot, Expression(Atom(std::atan2(0, -1) * -1 / 2)));
+											stage4.rTail().push_back(textO);
+										}
+									}
+								}
+							}
+							else
+							{
+								//error
+							}
+
+						}
+						if (areTitles)
+						{
+							resultTitles = stage4.eval(env);
+						}
+					}
+					else
+					{
+						//error
+					}
+				}
+
+				double Xaxis = minY*scaleY;
+				double Yaxis = minX;
+				bool hasXaxis = false;
+
+				Expression stage5(list);
+				if (minY < 0 && maxY > 0)
+				{
+					hasAxes = true;
+					hasXaxis = true;
+					Xaxis = 0;
+					Expression XA = helper_make_line(env, maxX * scaleX, Xaxis, minX * scaleX, Xaxis, 0);
+					stage5.rTail().push_back(XA);
+				}
+
+				if (minX < 0 && maxX > 0)
+				{
+					hasAxes = true;
+					Yaxis = 0;
+					Expression YA = helper_make_line(env, Yaxis, maxY * scaleY, Yaxis, minY * scaleY, 0);
+					stage5.rTail().push_back(YA);
+				}
+
+				if (hasAxes)
+				{
+					resultAxes = stage5.eval(env);
+				}
+
+				Expression stage6(list);
+				for (size_t i = 1; i < numpoints; i++)
+				{
+					double x1 = Xcord.rTail()[i-1].head().asNumber() * scaleX;
+					double y1 = Ycord.rTail()[i-1].head().asNumber() * scaleY;
+					double x2 = Xcord.rTail()[i].head().asNumber() * scaleX;
+					double y2 = Ycord.rTail()[i].head().asNumber() * scaleY;
+					Expression line = helper_make_line(env, x1, y1, x2, y2, 0);
+					stage6.rTail().push_back(line);
+				}
+				resultplot = stage6.eval(env);
+			}
+			else
+			{
+				//throw error
+			}
+	}
+	else
+	{
+		//throw error
+	}
+
+	Expression join1(Atom("join"));
+	join1.rTail().emplace_back(resultb);
+	join1.rTail().emplace_back(resultTM);
+	Expression result1 = join1.eval(env);
+
+	//implement join2 here
+	if (hasAxes)
+	{
+		Expression join2(Atom("join"));
+		join2.rTail().push_back(result1);
+		join2.rTail().emplace_back(resultAxes);
+		result1 = join2.eval(env);
+	}
+	//implement join3 here
+	Expression join3(Atom("join"));
+	join3.rTail().push_back(result1);
+	join3.rTail().emplace_back(resultplot);
+	Expression result2 = join3.eval(env);
+	if (!areTitles)
+	{
+		return result2;
+	}
+	else
+	{
+		Expression join4(Atom("join"));
+		join4.rTail().emplace_back(result2);
+		join4.rTail().emplace_back(resultTitles);
+		resultf = join4.eval(env);
+	}
+	return resultf;
+
+}
+
+bool Expression::checkline(const double x1, const double y1, const double x2, const double y2, const double x3, const double y3)
+{
+	double b = sqrt(((x3 - x2)*(x3 - x2) + (y3 - y2)*(y3 - y2)));
+	double a = sqrt(((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2)));
+	double c = sqrt(((x1 - x3)*(x1 - x3) + (y1 - y3)*(y1 - y3)));
+	double nat = ((a*a) + (b*b) - (c*c)) / (2 * a*b);
+	if(nat < -1)
+	{
+		double diff = nat + 1;
+		nat = -1 - diff;
+	}
+	double angle = acos(nat);
+
+	double check1 = 185 * (std::atan2(0, -1) / 180.0);
+	double check2 = 175 * (std::atan2(0, -1) / 180.0);
+	return (angle > check2 && angle < check1);
+}
+
 Expression Expression::make_box(Environment & env, const double minX, const double minY, const double maxX, const double maxY)
 {
 	Expression resultb;
@@ -917,6 +1298,9 @@ Expression Expression::eval(Environment & env){
   }
   else if (m_head.isSymbol() && m_head.asSymbol() == "discrete-plot") {
 	  return handle_discplot(env);
+  }
+  else if (m_head.isSymbol() && m_head.asSymbol() == "continuous-plot") {
+	  return handle_contplot(env);
   }
   else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
 	  islambda = true;

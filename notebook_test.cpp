@@ -36,6 +36,7 @@ private slots:
   void Test22();
   void Test23();
   void testDiscretePlotLayout();
+  void Test24();
 
 private:
 	NotebookApp Notebook;
@@ -857,5 +858,25 @@ void NotebookTest::testDiscretePlotLayout()
 	QCOMPARE(findPoints(scene, QPointF(10, -10), .6), 1);
 }
 
+void NotebookTest::Test24()
+{
+	std::string program = R"( 
+(begin
+    (define f (lambda (x) 
+        (+ (* 2 x) 1))) 
+    (continuous-plot f (list -2 2)
+        (list
+        (list "title" "A continuous linear function")
+        (list "abscissa-label" "x")
+        (list "ordinate-label" "y"))))
+)";
+	input->setPlainText(QString::fromStdString(program));
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
 
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+
+}
 
