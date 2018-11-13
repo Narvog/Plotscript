@@ -802,7 +802,7 @@ Expression Expression::handle_contplot(Environment & env)
 	Atom list("list");
 
 
-	if (rTail().size() > 2)
+	if (rTail().size() >= 2)
 	{
 		func = rTail()[0];
 		stage1 = rTail()[1].eval(env);
@@ -829,7 +829,7 @@ Expression Expression::handle_contplot(Environment & env)
 
 				stage3.rTail().emplace_back(Xcord);
 				Expression Ycord = stage3.eval(env);
-
+				/*
 				for (int i = 0; i < 9; i++)
 				{
 					Expression nextX(list);
@@ -915,7 +915,7 @@ Expression Expression::handle_contplot(Environment & env)
 						break;
 					}
 				}
-
+				*/
 				std::size_t numpoints = Xcord.rTail().size();
 
 				double maxX = -10000;

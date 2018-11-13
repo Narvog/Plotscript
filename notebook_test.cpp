@@ -37,6 +37,10 @@ private slots:
   void Test23();
   void testDiscretePlotLayout();
   void Test24();
+  void Test25();
+  void Test26();
+  void Test27();
+  void Test28();
 
 private:
 	NotebookApp Notebook;
@@ -869,6 +873,78 @@ void NotebookTest::Test24()
         (list "title" "A continuous linear function")
         (list "abscissa-label" "x")
         (list "ordinate-label" "y"))))
+)";
+	input->setPlainText(QString::fromStdString(program));
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+
+}
+
+void NotebookTest::Test25()
+{
+	std::string program = R"( 
+(begin
+   (define f (lambda (x) (sin x)))
+	(continuous-plot f (list (- pi) pi))
+)
+)";
+	input->setPlainText(QString::fromStdString(program));
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+
+}
+
+void NotebookTest::Test26()
+{
+	std::string program = R"( 
+(begin
+   (define f (lambda (x) (^ e x)))
+	(continuous-plot f (list -1 1))
+)
+)";
+	input->setPlainText(QString::fromStdString(program));
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+
+}
+
+void NotebookTest::Test27()
+{
+	std::string program = R"( 
+(begin
+   (define f (lambda (x) (/ 1 (+ 1 (^ e (- (* 5 x)))))))
+	(continuous-plot f (list -1 1))
+)
+)";
+	input->setPlainText(QString::fromStdString(program));
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+
+}
+
+void NotebookTest::Test28()
+{
+	std::string program = R"( 
+(begin
+   (define f (lambda (x) (/ 1 (+ 1 (^ e (- (* 20 x)))))))
+	(continuous-plot f (list -1 1))
+)
 )";
 	input->setPlainText(QString::fromStdString(program));
 	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
