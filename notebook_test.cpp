@@ -41,6 +41,7 @@ private slots:
   void Test26();
   void Test27();
   void Test28();
+  void Test29();
 
 private:
 	NotebookApp Notebook;
@@ -944,6 +945,24 @@ void NotebookTest::Test28()
 (begin
    (define f (lambda (x) (/ 1 (+ 1 (^ e (- (* 20 x)))))))
 	(continuous-plot f (list -1 1))
+)
+)";
+	input->setPlainText(QString::fromStdString(program));
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+
+}
+
+void NotebookTest::Test29()
+{
+	std::string program = R"( 
+(begin
+    (define f (lambda (x) (x))) 
+    (continuous-plot f (list -2 2))
 )
 )";
 	input->setPlainText(QString::fromStdString(program));

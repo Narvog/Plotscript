@@ -826,10 +826,14 @@ Expression Expression::handle_contplot(Environment & env)
 				stage3.rTail().emplace_back(func);
 
 				Expression Xcord = stage2.eval(env);
+				if (!(Xcord.rTail().back() == Expression(b2)))
+				{
+					Xcord.rTail().emplace_back(Expression(b2));
+				}
 
 				stage3.rTail().emplace_back(Xcord);
 				Expression Ycord = stage3.eval(env);
-				/*
+				
 				for (int i = 0; i < 9; i++)
 				{
 					Expression nextX(list);
@@ -861,15 +865,23 @@ Expression Expression::handle_contplot(Environment & env)
 							}
 							else
 							{
-								if (!(nextX.rTail()[j - 2] == Expression(x1)))
+								if (nextX.rTail().size() == 1)
 								{
 									nextX.rTail().emplace_back(Expression(x1));
 								}
-								if (j == max - 2)
+								else
 								{
-									nextX.rTail().emplace_back(Expression(x2));
-									nextX.rTail().emplace_back(Expression(x3));
+									if (!(nextX.rTail()[nextX.rTail().size() - 2] == Expression(x1)))
+									{
+										nextX.rTail().emplace_back(Expression(x1));
+									}
+									if (j == max - 2)
+									{
+										nextX.rTail().emplace_back(Expression(x2));
+										nextX.rTail().emplace_back(Expression(x3));
+									}
 								}
+								
 							}
 						}
 						else
@@ -893,7 +905,7 @@ Expression Expression::handle_contplot(Environment & env)
 									nextX.rTail().emplace_back(Expression(x2));
 									nextX.rTail().emplace_back(Expression(midx2));
 								}
-								else if (!(nextX.rTail()[j - 2] == Expression(2)))
+								else if (!(nextX.rTail()[nextX.rTail().size() - 2] == Expression(x2)))
 								{
 									nextX.rTail().emplace_back(Expression(x2));
 									nextX.rTail().emplace_back(Expression(midx2));
@@ -921,7 +933,7 @@ Expression Expression::handle_contplot(Environment & env)
 						break;
 					}
 				}
-				*/
+
 				std::size_t numpoints = Xcord.rTail().size();
 
 				double maxX = b2;
