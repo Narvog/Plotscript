@@ -1019,9 +1019,9 @@ Expression Expression::handle_contplot(Environment & env)
 										{
 											areTitles = true;
 											Expression textO = helper_make_text(env, titles.rTail()[i].rTail()[1].head().asString(), minX * scaleX, midY * scaleY, -B, 0, scale);
-											//Atom rot("\"text-rotation\"");
-											//rot.setString();
-											//textO.add_prop(rot, Expression(Atom(std::atan2(0, -1) * -1 / 2)));
+											Atom rot("\"text-rotation\"");
+											rot.setString();
+											textO.add_prop(rot, Expression(Atom(std::atan2(0, -1) * -1 / 2)));
 											stage4.rTail().push_back(textO);
 										}
 									}
