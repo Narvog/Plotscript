@@ -836,6 +836,7 @@ Expression Expression::handle_contplot(Environment & env)
 					Expression nextY(map);
 					nextY.rTail().push_back(func);
 					int z = 0;
+					int numfailed = 0;
 					std::size_t max = Xcord.rTail().size();
 					for (size_t j = 1; j < Xcord.rTail().size() - 1; j++)
 					{
@@ -848,7 +849,10 @@ Expression Expression::handle_contplot(Environment & env)
 
 						double x3 = Xcord.rTail()[j+1].head().asNumber();
 						double y3 = Ycord.rTail()[j+1].head().asNumber();
-
+						if (z == 9)
+						{
+							z = 9;
+						}
 						if (checkline(x1, y1, x2, y2, x3, y3))
 						{
 							if (nextX.rTail().empty())
@@ -870,6 +874,7 @@ Expression Expression::handle_contplot(Environment & env)
 						}
 						else
 						{
+							numfailed++;
 							double midx1 = (x2 + x1) / 2;
 							double midx2 = (x3 + x2) / 2;
 							if (nextX.rTail().empty())
@@ -881,14 +886,14 @@ Expression Expression::handle_contplot(Environment & env)
 							}
 							else
 							{
-								if (!(nextX.rTail()[j - 2] == Expression(x1)))
+								if (!(nextX.rTail()[nextX.rTail().size() - 2] == Expression(x1)))
 								{
 									nextX.rTail().emplace_back(Expression(x1));
 									nextX.rTail().emplace_back(Expression(midx1));
 									nextX.rTail().emplace_back(Expression(x2));
 									nextX.rTail().emplace_back(Expression(midx2));
 								}
-								else
+								else if (!(nextX.rTail()[j - 2] == Expression(2)))
 								{
 									nextX.rTail().emplace_back(Expression(x2));
 									nextX.rTail().emplace_back(Expression(midx2));
@@ -903,6 +908,7 @@ Expression Expression::handle_contplot(Environment & env)
 							
 						}
 					}
+					numfailed;
 					nextX = nextX.eval(env);
 					if (nextX.rTail().size() > Xcord.rTail().size())
 					{
@@ -918,22 +924,10 @@ Expression Expression::handle_contplot(Environment & env)
 				*/
 				std::size_t numpoints = Xcord.rTail().size();
 
-				double maxX = -10000;
-				double minX = 100000;
+				double maxX = b2;
+				double minX = b1;
 				double maxY = -10000;
 				double minY = 100000;
-
-				for (size_t i = 0; i < numpoints; i++)
-				{
-					if (Xcord.rTail()[i].head().asNumber() > maxX)
-					{
-						maxX = Xcord.rTail()[i].head().asNumber();
-					}
-					if (Xcord.rTail()[i].head().asNumber() < minX)
-					{
-						minX = Xcord.rTail()[i].head().asNumber();
-					}
-				}
 
 				for (size_t i = 0; i < numpoints; i++)
 				{
@@ -955,7 +949,7 @@ Expression Expression::handle_contplot(Environment & env)
 
 				resultb = make_box(env, minX * scaleX, minY * scaleY, maxX * scaleX, maxY * scaleY);
 
-				resultTM = make_pos_labels(env, D, C, scale, minX, maxX, minY, maxY, scaleX, scaleY);
+				
 
 				if (rTail().size() == 3)
 				{
@@ -1049,6 +1043,8 @@ Expression Expression::handle_contplot(Environment & env)
 						//error
 					}
 				}
+
+				resultTM = make_pos_labels(env, D, C, scale, minX, maxX, minY, maxY, scaleX, scaleY);
 
 				double Xaxis = minY*scaleY;
 				double Yaxis = minX;
