@@ -8,6 +8,7 @@
 #include "semantic_error.hpp"
 #include "interpreter.hpp"
 #include "expression.hpp"
+#include "startup_config.hpp"
 
 Expression run(const std::string & program){
   
@@ -1744,4 +1745,68 @@ TEST_CASE("Test Prersonal 95", "[interpreter]") {
 	bool ok = interp.parseStream(iss);
 	REQUIRE(ok == true);
 	REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
+
+TEST_CASE("Test Prersonal 96", "[interpreter]") {
+	std::string program = R"( 
+(discrete-plot (list (list -1 -1) (list 1 1)) (list (list "title" "The Title") (list "abscissa-label" "X Label") (list "ordinate-label" "Y Label")))
+)";
+
+	Interpreter interp;
+	std::ifstream ifs(STARTUP_FILE);
+	interp.parseStream(ifs);
+	Expression exp = interp.evaluate();
+	std::istringstream iss(program);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	Expression result = interp.evaluate();
+	REQUIRE(result.rTail().size() == 17);
+}
+
+TEST_CASE("Test Prersonal 97", "[interpreter]") {
+	std::string input = R"( 
+(begin
+    (define f (lambda (x) 
+        (+ (* 2 x) 1))) 
+    (continuous-plot f (list -2 2)
+        (list
+        (list "title" "A continuous linear function")
+        (list "abscissa-label" "x")
+        (list "ordinate-label" "y"))))
+)";
+
+	Interpreter interp;
+	std::ifstream ifs(STARTUP_FILE);
+	interp.parseStream(ifs);
+	Expression exp = interp.evaluate();
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	Expression result = interp.evaluate();
+	REQUIRE(result.rTail().size() == 63);
+}
+
+
+TEST_CASE("Test Prersonal 98", "[interpreter]") {
+	std::string input = R"( 
+   (begin
+   (define f (lambda (x) (sin x)))
+	(continuous-plot f (list (- pi) pi))
+)
+)";
+
+	Interpreter interp;
+	std::ifstream ifs(STARTUP_FILE);
+	interp.parseStream(ifs);
+	Expression exp = interp.evaluate();
+
+	std::istringstream iss(input);
+
+	bool ok = interp.parseStream(iss);
+	REQUIRE(ok == true);
+	Expression result = interp.evaluate();
+	REQUIRE(result.rTail().size() == 78);
 }

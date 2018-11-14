@@ -664,13 +664,11 @@ Expression Expression::handle_discplot(Environment & env)
 
 			double Xaxis = minY*scaleY;
 			double Yaxis = minX;
-			bool hasXaxis = false;
 
 			Expression stage2(list);
 			if (minY < 0 && maxY > 0)
 			{
 			hasAxes = true;
-			hasXaxis = true;
 			Xaxis = 0;
 			Expression XA = helper_make_line(env, maxX * scaleX, Xaxis, minX * scaleX, Xaxis, 0);
 			stage2.rTail().push_back(XA);
@@ -776,7 +774,6 @@ Expression Expression::handle_contplot(Environment & env)
 	double B = 3;
 	double C = 2;
 	double D = 2;
-	double P = 0.5;
 	double scale = 1;
 	bool areTitles = false;
 	bool hasAxes = false;
@@ -813,14 +810,6 @@ Expression Expression::handle_contplot(Environment & env)
 				double dist = b2 - b1;
 				double seg = dist / 50;
 
-				std::stringstream stream;
-				stream << std::setprecision(4) << seg;
-				std::string segd;
-				stream >> segd;
-				double seg2 = std::stod(segd, nullptr);
-				double segh1 = seg * 1000;
-				int segh2 = (int)segh1;
-				double seg3 = (double)(segh2/1000.0);
 				stage2.append(Atom(b1));
 				stage2.append(Atom(b2));
 				stage2.append(Atom(seg));
@@ -842,7 +831,6 @@ Expression Expression::handle_contplot(Environment & env)
 					Expression nextY(map);
 					nextY.rTail().push_back(func);
 					int z = 0;
-					int numfailed = 0;
 					std::size_t max = Xcord.rTail().size();
 					for (size_t j = 1; j < Xcord.rTail().size() - 1; j++)
 					{
@@ -885,7 +873,6 @@ Expression Expression::handle_contplot(Environment & env)
 						}
 						else
 						{
-							numfailed++;
 							double midx1 = (x2 + x1) / 2;
 							double midx2 = (x3 + x2) / 2;
 							if (nextX.rTail().empty())
@@ -919,7 +906,6 @@ Expression Expression::handle_contplot(Environment & env)
 							
 						}
 					}
-					numfailed;
 					nextX = nextX.eval(env);
 					if (nextX.rTail().size() > Xcord.rTail().size())
 					{
@@ -1059,13 +1045,11 @@ Expression Expression::handle_contplot(Environment & env)
 
 				double Xaxis = minY*scaleY;
 				double Yaxis = minX;
-				bool hasXaxis = false;
 
 				Expression stage5(list);
 				if (minY < 0 && maxY > 0)
 				{
 					hasAxes = true;
-					hasXaxis = true;
 					Xaxis = 0;
 					Expression XA = helper_make_line(env, maxX * scaleX, Xaxis, minX * scaleX, Xaxis, 0);
 					stage5.rTail().push_back(XA);

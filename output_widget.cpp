@@ -22,10 +22,8 @@ void OutputWidget::recievedData(QString info)
 
 void OutputWidget::resizeEvent(QResizeEvent * ev)
 {
-	//qDebug() << "resize Event Caught!";
 	gView->fitInView(gView->scene()->sceneRect(), Qt::KeepAspectRatio);
-	//auto resize = ev;
-	//QWidget::resizeEvent(ev);
+	QWidget::resizeEvent(ev);
 }
 
 void OutputWidget::recievedExp(Expression exp)

@@ -215,6 +215,21 @@ TEST_CASE( "test comparison", "[atom]" ) {
     REQUIRE(a != c);
   }
 
+  {
+	  INFO("copy constructor test for complex");
+	  Atom a(std::complex<double>(0.0, 0.0));
+	  Atom b(a);
+	  REQUIRE(a == b);
+  }
+
+  {
+	  INFO("copy constructor test for string");
+	  Atom a("\"test\"");
+	  a.setString();
+	  Atom b(a);
+	  REQUIRE(a == b);
+  }
+
 }
 
 
