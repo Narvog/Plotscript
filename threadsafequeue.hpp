@@ -5,6 +5,7 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <condition_variable>
 
 template<typename T>
 class ThreadSafeQueue
