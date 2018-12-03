@@ -25,7 +25,7 @@ void Consumer::run()
 	{
 		std::string input;
 		OperadQ->wait_and_pop(input);
-		if (input != "%stop" && input != "%reset")
+		if (input != "%stop" && input != "%reset" && input != "%exit")
 		{
 			std::istringstream expression(input);
 			if (!interp.parseStream(expression)) {

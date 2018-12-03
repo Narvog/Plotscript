@@ -90,7 +90,6 @@ void repl(){
 		if (line.empty()) continue;
 
 		
-
 		Expression exp;
 		switch (currentS) {
 		case RUNNING:
@@ -99,6 +98,17 @@ void repl(){
 				currentS = STOPPED;
 				input->push(line);
 				
+				output->wait_and_pop(exp);
+				delete input;
+				ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
+				output = nullptr;
+				t1.join();
+			}
+			else if (line == "%exit")
+			{
+				currentS = STOPPED;
+				input->push(line);
+
 				output->wait_and_pop(exp);
 				delete input;
 				ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
@@ -154,6 +164,10 @@ void repl(){
 				std::thread t2(&Consumer::run, cons);
 				t1 = std::move(t2);
 			}
+			else if (line == "%exit")
+			{
+
+			}
 			else if (line == "%reset")
 			{
 				std::cerr << "Error: interpreter kernal is stopped no reason to reset" << std::endl;
@@ -170,10 +184,11 @@ void repl(){
 		default:
 			break;
 		}
-		
+		if (line == "%exit")
+		{
+			return;
+		}
 	}
-  cons.Exit = true;
-  t1.join();
   delete input;
   delete output;
 }
