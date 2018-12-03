@@ -122,7 +122,7 @@ void repl(){
 			}
 			else if (line == "%start")
 			{
-
+				std::cerr << "Error: interpreter kernal already running" << std::endl;
 			}
 			else
 			{
