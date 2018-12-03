@@ -37,6 +37,7 @@ public:
    */
   Expression evaluate();
 
+
 private:
 
   // the environment
@@ -44,6 +45,7 @@ private:
 
   // the AST
   Expression ast;
+
 };
 
 #endif

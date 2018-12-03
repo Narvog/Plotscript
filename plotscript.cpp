@@ -6,6 +6,7 @@
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
 #include "startup_config.hpp"
+#include "consumer.hpp"
 
 
 
@@ -74,33 +75,42 @@ int eval_from_command(std::string argexp){
 
 // A REPL is a repeated read-eval-print loop
 void repl(){
-  Interpreter interp;
-  std::ifstream ifs(STARTUP_FILE);
-  interp.parseStream(ifs);
-  Expression exp = interp.evaluate();
-    
-  while(!std::cin.eof()){
-    
-    prompt();
-    std::string line = readline();
-    
-    if(line.empty()) continue;
+	ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
+	ThreadSafeQueue<Expression> * output;
+	Consumer cons(input);
+	output = cons.getReturnQueue();
+	std::thread t1(&Consumer::run, cons);
+	while (!std::cin.eof()) {
 
-    std::istringstream expression(line);
-    
-    if(!interp.parseStream(expression)){
-      error("Invalid Expression. Could not parse.");
-    }
-    else{
-      try{
-	Expression exp = interp.evaluate();
-	std::cout << exp << std::endl;
-      }
-      catch(const SemanticError & ex){
-	std::cerr << ex.what() << std::endl;
-      }
-    }
-  }
+		prompt();
+		std::string line = readline();
+
+		if (line.empty()) continue;
+
+		input->push(line);
+
+		Expression exp;
+		output->wait_and_pop(exp);
+		if (exp.isHeadSymbol())
+		{
+			if (exp.head().asSymbol() == "!!!ERROR!!!")
+			{
+				
+			}
+			else
+			{
+				std::cout << exp << std::endl;
+			}
+		}
+		else
+		{
+			std::cout << exp << std::endl;
+		}
+	}
+  cons.Exit = true;
+  t1.join();
+  delete input;
+  delete output;
 }
 
 int main(int argc, char *argv[])
