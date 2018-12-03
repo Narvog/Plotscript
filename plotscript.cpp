@@ -75,6 +75,8 @@ int eval_from_command(std::string argexp){
 
 // A REPL is a repeated read-eval-print loop
 void repl(){
+	enum State {RUNNING, STOPPED};
+	State currentS = RUNNING;
 	ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
 	ThreadSafeQueue<Expression> * output;
 	Consumer cons(input);
@@ -87,25 +89,88 @@ void repl(){
 
 		if (line.empty()) continue;
 
-		input->push(line);
+		
 
 		Expression exp;
-		output->wait_and_pop(exp);
-		if (exp.isHeadSymbol())
-		{
-			if (exp.head().asSymbol() == "!!!ERROR!!!")
+		switch (currentS) {
+		case RUNNING:
+			if (line == "%stop")
 			{
+				currentS = STOPPED;
+				input->push(line);
 				
+				output->wait_and_pop(exp);
+				delete input;
+				ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
+				output = nullptr;
+				t1.join();
+			}
+			else if (line == "%reset")
+			{
+				currentS = RUNNING;
+				input->push(line);
+
+				output->wait_and_pop(exp);
+				delete input;
+				ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
+				output = nullptr;
+				t1.join();
+				Consumer cons(input);
+				output = cons.getReturnQueue();
+				std::thread t2(&Consumer::run, cons);
+				t1 = std::move(t2);
+			}
+			else if (line == "%start")
+			{
+
 			}
 			else
 			{
-				std::cout << exp << std::endl;
+				input->push(line);
+				output->wait_and_pop(exp);
+				if (exp.isHeadSymbol())
+				{
+					if (exp.head().asSymbol() == "!!!ERROR!!!")
+					{
+
+					}
+					else
+					{
+						std::cout << exp << std::endl;
+					}
+				}
+				else
+				{
+					std::cout << exp << std::endl;
+				}
 			}
+			break;
+		case STOPPED:
+			if (line == "%start")
+			{
+				currentS = RUNNING;
+				Consumer cons(input);
+				output = cons.getReturnQueue();
+				std::thread t2(&Consumer::run, cons);
+				t1 = std::move(t2);
+			}
+			else if (line == "%reset")
+			{
+				std::cerr << "Error: interpreter kernal is stopped no reason to reset" << std::endl;
+			}
+			else if (line == "%stop")
+			{
+				std::cerr << "Error: interpreter kernal already stopped" << std::endl;
+			}
+			else
+			{
+				std::cerr << "Error: interpreter kernal not running" << std::endl;
+			}
+			break;
+		default:
+			break;
 		}
-		else
-		{
-			std::cout << exp << std::endl;
-		}
+		
 	}
   cons.Exit = true;
   t1.join();

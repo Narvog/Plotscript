@@ -25,24 +25,33 @@ void Consumer::run()
 	{
 		std::string input;
 		OperadQ->wait_and_pop(input);
-
-
-		std::istringstream expression(input);
-		if (!interp.parseStream(expression)) {
-			SemanticError("Invalid Expression. Could not parse.");
+		if (input != "%stop" && input != "%reset")
+		{
+			std::istringstream expression(input);
+			if (!interp.parseStream(expression)) {
+				std::string t = "!!!ERROR!!!";
+				std::cerr << "Invalid Expression. Could not parse." << std::endl;
+				resultQ->push(Expression(t));
+			}
+			else
+			{
+				try
+				{
+					Expression exp = interp.evaluate();
+					resultQ->push(exp);
+				}
+				catch (const SemanticError & ex) {
+					std::string t = "!!!ERROR!!!";
+					std::cerr << ex.what() << std::endl;
+					resultQ->push(Expression(t));
+				}
+			}
 		}
 		else
 		{
-			try
-			{
-				Expression exp = interp.evaluate();
-				resultQ->push(exp);
-			}
-			catch (const SemanticError & ex) {
-				std::string t = "!!!ERROR!!!";
-				std::cerr << ex.what() << std::endl;
-				resultQ->push(Expression(t));
-			}
+			Exit = true;
+			resultQ->push(Expression());
 		}
+		
 	}
 }
