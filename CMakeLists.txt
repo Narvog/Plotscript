@@ -45,6 +45,10 @@ set(gui_src
 	output_widget.cpp
 	interpreter.hpp 
 	interpreter.cpp
+      consumer.hpp
+      consumer.cpp
+      threadsafequeue.hpp
+      threadsafequeue.tpp
   )
 
 # EDIT

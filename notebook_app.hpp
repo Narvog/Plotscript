@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <QLayout>
+#include <QPushButton>
 
 class NotebookApp : public QWidget
 {
@@ -21,13 +22,17 @@ class NotebookApp : public QWidget
 public:
 
 	NotebookApp(QWidget * parent = nullptr);
-	void reset();
+	void resetAPP();
 signals:
 	void setOut();
 private:
 	
 	InputWidget * input = new InputWidget();
 	OutputWidget * output = new OutputWidget();
+	QPushButton * start = new QPushButton();
+	QPushButton * stop = new QPushButton();
+	QPushButton * reset = new QPushButton();
+
 	Interpreter interp;
 	QString line;
 signals:

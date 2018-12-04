@@ -33,11 +33,23 @@ NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent)
 	input->setObjectName("input");
 	output->setObjectName("output");
 	auto layout = new QGridLayout();
-	layout->addWidget(input, 0, 0);
+	layout->addWidget(input, 1, 1);
 	QObject::connect(input, QOverload<QString>::of(&InputWidget::textInputCompleted), this, &NotebookApp::inputSet);
-	layout->addWidget(output, 1, 0);
+	layout->addWidget(output, 2, 1);
 	QObject::connect(this, QOverload<QString>::of(&NotebookApp::wasSet), output, &OutputWidget::recievedData);
 	QObject::connect(this, &NotebookApp::expSet, output, &OutputWidget::recievedExp);
+
+	start->setObjectName("start");
+	start->setText("Start Kernal");
+	layout->addWidget(start, 0, 0);
+
+	stop->setObjectName("stop");
+	stop->setText("Stop Kernal");
+	layout->addWidget(stop, 0, 1);
+
+	reset->setObjectName("reset");
+	reset->setText("Reset Kernal");
+	layout->addWidget(reset, 0, 2);
 
 	std::ifstream ifs(STARTUP_FILE);
 	interp.parseStream(ifs);
@@ -46,7 +58,7 @@ NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent)
 	this->setLayout(layout);
 }
 
-void NotebookApp::reset()
+void NotebookApp::resetAPP()
 {
 	interp = Interpreter();
 	std::ifstream ifs(STARTUP_FILE);
