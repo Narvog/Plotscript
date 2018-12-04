@@ -81,7 +81,7 @@ void NotebookTest::Test1()
 	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "NONE", "Incorrect Text");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test2()
@@ -98,7 +98,7 @@ void NotebookTest::Test2()
 	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "(-1)", "Incorrect Text");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test3()
@@ -115,7 +115,7 @@ void NotebookTest::Test3()
 	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "(-1,-1.22465e-16)", "Incorrect Text");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test4()
@@ -132,7 +132,7 @@ void NotebookTest::Test4()
 	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "(\"The Title\")", "Incorrect Text");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test5()
@@ -146,7 +146,7 @@ void NotebookTest::Test5()
 	auto scene = view->scene();
 	auto list = scene->items();
 	QVERIFY2(list.size() == 0, "Error an Item was found in the scene when Lambda was called.");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test6()
@@ -163,6 +163,7 @@ void NotebookTest::Test6()
 	auto ellipseL = qgraphicsitem_cast<QGraphicsEllipseItem *>(ellipse);
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
 	QVERIFY2(ellipseL->pos() == QPointF(0,0), "Ellipse found at wrong coordinates");
+	Notebook.reset();
 }
 
 void NotebookTest::Test7()
@@ -180,6 +181,7 @@ void NotebookTest::Test7()
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
 	QVERIFY2((ellipseL->rect().height() == 20.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0,0)), "Ellipse found at wrong coordinates");
+	Notebook.reset();
 }
 
 void NotebookTest::Test8()
@@ -228,6 +230,7 @@ void NotebookTest::Test8()
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
 	QVERIFY2((ellipseL->rect().height() == 32.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(64, 0)), "Ellipse found at wrong coordinates");
+	Notebook.reset();
 }
 
 void NotebookTest::Test9()
@@ -276,6 +279,7 @@ void NotebookTest::Test9()
 	QVERIFY2(ellipseL->isVisible(), "Ellipse Not Visible");
 	QVERIFY2((ellipseL->rect().height() == 32.0), "Ellipse has wrong dimensions");
 	QVERIFY2((ellipseL->rect().center() == QPoint(0, 64)), "Ellipse found at wrong coordinates");
+	Notebook.reset();
 }
 
 void NotebookTest::Test10()
@@ -295,6 +299,7 @@ void NotebookTest::Test10()
 	QPen pen = QPen(QColor(0, 0, 0));
 	pen.setWidth(1);
 	QVERIFY2((lineL->pen() == pen), "Incorrect pen width");
+	Notebook.reset();
 }
 
 void NotebookTest::Test11()
@@ -314,6 +319,7 @@ void NotebookTest::Test11()
 	QPen pen = QPen(QColor(0, 0, 0));
 	pen.setWidth(4);
 	QVERIFY2((lineL->pen() == pen), "Incorrect pen width");
+	Notebook.reset();
 }
 
 void NotebookTest::Test12()
@@ -346,6 +352,7 @@ void NotebookTest::Test12()
 	QVERIFY2(lineL->isVisible(), "Line Not Visible");
 	QVERIFY2(lineL->contains(QPoint(20, 0)) && lineL->contains(QPoint(20, 20)), "Line isn't at the right points");
 	QVERIFY2((lineL->pen() == pen), "Incorrect pen width");
+	Notebook.reset();
 }
 
 void NotebookTest::Test13()
@@ -378,6 +385,7 @@ void NotebookTest::Test13()
 	QVERIFY2(lineL->isVisible(), "Line Not Visible");
 	QVERIFY2(lineL->contains(QPoint(0, 20)) && lineL->contains(QPoint(20, 20)), "Line isn't at the right points");
 	QVERIFY2((lineL->pen() == pen), "Incorrect pen width");
+	Notebook.reset();
 }
 
 void NotebookTest::Test14()
@@ -395,7 +403,7 @@ void NotebookTest::Test14()
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hello World!", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 0), "Error Text in Wrong Place");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test15()
@@ -437,7 +445,7 @@ void NotebookTest::Test15()
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(100, 0), "Error Text in Wrong Place");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test16()
@@ -479,7 +487,7 @@ void NotebookTest::Test16()
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 100), "Error Text in Wrong Place");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test17()
@@ -496,7 +504,7 @@ void NotebookTest::Test17()
 	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Error: Invalid Expression. Could not parse.", "Incorrect Text");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test18()
@@ -513,7 +521,7 @@ void NotebookTest::Test18()
 	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Error: argument to first is not a list", "Incorrect Text");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test19()
@@ -555,7 +563,7 @@ void NotebookTest::Test19()
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, -100), "Error Text in Wrong Place");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test20()
@@ -597,7 +605,7 @@ void NotebookTest::Test20()
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(-100, 0), "Error Text in Wrong Place");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test21()
@@ -614,7 +622,7 @@ void NotebookTest::Test21()
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hello World!", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 0), "Error Text in Wrong Place");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test22()
@@ -655,7 +663,7 @@ void NotebookTest::Test22()
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hi", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(-100, 0), "Error Text in Wrong Place");
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test23()
@@ -673,7 +681,7 @@ void NotebookTest::Test23()
 	QVERIFY2(textL->isVisible(), "Text Not Visible");
 	QVERIFY2(textL->toPlainText() == "Hello World!", "Incorrect Text");
 	QVERIFY2(textL->sceneBoundingRect().center() == QPointF(0, 0), "Error Text in Wrong Place");
-
+	Notebook.reset();
 }
 
 /*
@@ -843,6 +851,7 @@ void NotebookTest::testDiscretePlotLayout()
 
 	// check the point at (1,1)
 	QCOMPARE(findPoints(scene, QPointF(10, -10), .6), 1);
+	Notebook.reset();
 }
 
 void NotebookTest::Test24()
@@ -865,7 +874,7 @@ void NotebookTest::Test24()
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
 	*/
-
+	Notebook.reset();
 }
 
 void NotebookTest::Test25()
@@ -923,6 +932,7 @@ void NotebookTest::Test25()
 	// check the bounding box right
 	QCOMPARE(findLines(scene, QRectF(xmax, -ymax, 0, 20), 0.1), 1);
 	*/
+	Notebook.reset();
 }
 
 void NotebookTest::Test26()
@@ -941,6 +951,7 @@ void NotebookTest::Test26()
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
 	*/
+	Notebook.reset();
 }
 
 void NotebookTest::Test27()
@@ -959,6 +970,7 @@ void NotebookTest::Test27()
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
 	*/
+	Notebook.reset();
 }
 
 void NotebookTest::Test28()
@@ -977,6 +989,7 @@ void NotebookTest::Test28()
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
 	*/
+	Notebook.reset();
 }
 
 void NotebookTest::Test29()
@@ -995,5 +1008,6 @@ void NotebookTest::Test29()
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
 	*/
+	Notebook.reset();
 }
 

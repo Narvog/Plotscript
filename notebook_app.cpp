@@ -2,10 +2,6 @@
 void NotebookApp::inputSet(QString inputLine)
 {
 	line = inputLine;
-	Interpreter interp;
-	std::ifstream ifs(STARTUP_FILE);
-	interp.parseStream(ifs);
-	Expression exp = interp.evaluate();
 
 	std::istringstream expression(line.toStdString());
 	if (!interp.parseStream(expression)) {
@@ -43,5 +39,17 @@ NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent)
 	QObject::connect(this, QOverload<QString>::of(&NotebookApp::wasSet), output, &OutputWidget::recievedData);
 	QObject::connect(this, &NotebookApp::expSet, output, &OutputWidget::recievedExp);
 
+	std::ifstream ifs(STARTUP_FILE);
+	interp.parseStream(ifs);
+	Expression exp = interp.evaluate();
+
 	this->setLayout(layout);
+}
+
+void NotebookApp::reset()
+{
+	interp = Interpreter();
+	std::ifstream ifs(STARTUP_FILE);
+	interp.parseStream(ifs);
+	Expression exp = interp.evaluate();
 }

@@ -21,14 +21,14 @@ class NotebookApp : public QWidget
 public:
 
 	NotebookApp(QWidget * parent = nullptr);
-
+	void reset();
 signals:
 	void setOut();
 private:
-
+	
 	InputWidget * input = new InputWidget();
 	OutputWidget * output = new OutputWidget();
-
+	Interpreter interp;
 	QString line;
 signals:
 	void wasSet(QString inputLine);
