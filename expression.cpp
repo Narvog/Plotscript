@@ -22,6 +22,7 @@ Expression::Expression(const Expression & a){
   islambda = a.islambda;
   inLambda = a.inLambda;
   propMap = a.propMap;
+  error = a.error;
   for(auto e : a.m_tail){
     m_tail.push_back(e);
   }
@@ -36,6 +37,7 @@ Expression & Expression::operator=(const Expression & a){
 	islambda = a.islambda;
 	inLambda = a.inLambda;
 	propMap = a.propMap;
+	error = a.error;
     m_tail.clear();
     for(auto e : a.m_tail){
       m_tail.push_back(e);
@@ -1415,6 +1417,16 @@ void Expression::add_prop(const Atom & key, const Expression & prop) {
 	}
 
 	propMap.emplace(key.asString(), prop);
+}
+
+void Expression::setError()
+{
+	error = true;
+}
+
+bool Expression::isError()
+{
+	return error;
 }
 
 

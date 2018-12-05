@@ -90,14 +90,17 @@ public:
   bool is_prop(const Atom &key) const;
   Expression get_prop(const Atom &key) const;
   void add_prop(const Atom &key, const Expression &prop);
+  
 
+  void setError();
+  bool isError();
 
 private:
   // the head of the expression
   Atom m_head;
   std::map<std::string, Expression> propMap;
   
-
+  bool error = false;
   bool isList = false;
   bool islambda = false;
   bool islambdaexp = false;

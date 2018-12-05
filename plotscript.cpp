@@ -127,6 +127,17 @@ void repl(){
 			{
 				input.push(line);
 				output.wait_and_pop(exp);
+
+				if (exp.isError())
+				{
+					std::cerr << exp.head().asSymbol() << std::endl;
+				}
+				else
+				{
+					std::cout << exp << std::endl;
+				}
+
+				/*
 				if (exp.isHeadSymbol())
 				{
 					if (exp.head().asSymbol() == "!!!ERROR!!!")
@@ -142,6 +153,7 @@ void repl(){
 				{
 					std::cout << exp << std::endl;
 				}
+				*/
 			}
 			break;
 		case STOPPED:

@@ -24,9 +24,11 @@ void Consumer::run()
 		{
 			std::istringstream expression(input);
 			if (!interp.parseStream(expression)) {
-				std::string t = "!!!ERROR!!!";
-				std::cerr << "Invalid Expression. Could not parse." << std::endl;
-				resultQ->push(Expression(t));
+				std::string t = "Invalid Expression.Could not parse.";
+				Expression result(t);
+				result.setError();
+				//std::cerr << "Invalid Expression. Could not parse." << std::endl;
+				resultQ->push(result);
 			}
 			else
 			{
@@ -36,9 +38,11 @@ void Consumer::run()
 					resultQ->push(exp);
 				}
 				catch (const SemanticError & ex) {
-					std::string t = "!!!ERROR!!!";
-					std::cerr << ex.what() << std::endl;
-					resultQ->push(Expression(t));
+					std::string t = ex.what();
+					Expression result(t);
+					result.setError();
+					//std::cerr << ex.what() << std::endl;
+					resultQ->push(result);
 				}
 			}
 		}

@@ -54,7 +54,7 @@ TEST_CASE("test3", "[consumer]")
 	input.push(line);
 
 	output.wait_and_pop(exp);
-	std::string t = "!!!ERROR!!!";
+	std::string t = "Error during evaluation: unknown symbol";
 	CHECK(exp == Expression(t));
 
 
@@ -79,7 +79,7 @@ TEST_CASE("test4", "[consumer]")
 	input.push(line);
 
 	output.wait_and_pop(exp);
-	std::string t = "!!!ERROR!!!";
+	std::string t = "Invalid Expression.Could not parse.";
 	CHECK(exp == Expression(t));
 
 
