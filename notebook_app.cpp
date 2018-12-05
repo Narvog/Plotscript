@@ -10,13 +10,20 @@ void NotebookApp::inputSet(QString inputLine)
 	case NotebookApp::RUNNING:
 		inputQ.push(line.toStdString());
 		
+
+		/*
+		while ((!outputQ.try_pop(exp)))
+		{
+
+		} 
+		*/
 		/*
 		while (outputQ.empty())
 		{
 			outputQ.try_pop(exp);
 		}
 		*/
-		outputQ.wait_and_pop(exp);
+		//outputQ.wait_and_pop(exp);
 
 		if (exp.isError())
 		{
