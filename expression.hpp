@@ -91,8 +91,8 @@ public:
   Expression get_prop(const Atom &key) const;
   void add_prop(const Atom &key, const Expression &prop);
 
-private:
 
+private:
   // the head of the expression
   Atom m_head;
   std::map<std::string, Expression> propMap;

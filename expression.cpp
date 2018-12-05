@@ -11,7 +11,6 @@
 Expression::Expression(){}
 
 Expression::Expression(const Atom & a){
-
   m_head = a;
 }
 
@@ -1417,3 +1416,5 @@ void Expression::add_prop(const Atom & key, const Expression & prop) {
 
 	propMap.emplace(key.asString(), prop);
 }
+
+
