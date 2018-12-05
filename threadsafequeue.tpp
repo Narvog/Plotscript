@@ -46,3 +46,4 @@ void ThreadSafeQueue<T>::wait_and_pop(T & popped_value)
 	popped_value = real_queue.front();
 	real_queue.pop();
 }
+

@@ -1,9 +1,9 @@
 #include "consumer.hpp"
 
-Consumer::Consumer(ThreadSafeQueue<std::string>* inputQ)
+Consumer::Consumer(ThreadSafeQueue<std::string> *inputQ, ThreadSafeQueue<Expression> *outputQ)
 {
 	OperadQ = inputQ;
-
+	resultQ = outputQ;
 	std::ifstream ifs(STARTUP_FILE);
 	interp.parseStream(ifs);
 	Expression exp = interp.evaluate();
@@ -12,11 +12,6 @@ Consumer::Consumer(ThreadSafeQueue<std::string>* inputQ)
 Consumer::~Consumer()
 {
 
-}
-
-ThreadSafeQueue<Expression>* Consumer::getReturnQueue()
-{
-	return resultQ;
 }
 
 void Consumer::run()

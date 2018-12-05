@@ -19,6 +19,7 @@ public:
 
 	void wait_and_pop(T & popped_value);
 
+
 	bool EXIT = false;
 private:
 	std::queue<T> real_queue;

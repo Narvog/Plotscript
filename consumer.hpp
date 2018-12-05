@@ -14,17 +14,16 @@ class Consumer
 {
 public:
 	Consumer();
-	Consumer(ThreadSafeQueue<std::string> * inputQ);
+	Consumer(ThreadSafeQueue<std::string> *inputQ, ThreadSafeQueue<Expression> *outputQ);
 	~Consumer();
 
-	ThreadSafeQueue<Expression> * getReturnQueue();
 
 	void run();
 
 	bool Exit = false;
 private:
-	ThreadSafeQueue<Expression> * resultQ = new ThreadSafeQueue<Expression>;
-	ThreadSafeQueue<std::string> * OperadQ = nullptr;
+	ThreadSafeQueue<Expression> * resultQ;
+	ThreadSafeQueue<std::string> * OperadQ;
 	Interpreter interp;
 };
 

@@ -77,10 +77,9 @@ int eval_from_command(std::string argexp){
 void repl(){
 	enum State {RUNNING, STOPPED};
 	State currentS = RUNNING;
-	ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
-	ThreadSafeQueue<Expression> * output;
-	Consumer cons(input);
-	output = cons.getReturnQueue();
+	ThreadSafeQueue<std::string>  input;
+	ThreadSafeQueue<Expression>  output;
+	Consumer cons(&input, &output);
 	std::thread t1(&Consumer::run, cons);
 	while (!std::cin.eof()) {
 
@@ -96,37 +95,27 @@ void repl(){
 			if (line == "%stop")
 			{
 				currentS = STOPPED;
-				input->push(line);
+				input.push(line);
 				
-				output->wait_and_pop(exp);
-				delete input;
-				ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
-				output = nullptr;
+				output.wait_and_pop(exp);
 				t1.join();
 			}
 			else if (line == "%exit")
 			{
 				currentS = STOPPED;
-				input->push(line);
+				input.push(line);
 
-				output->wait_and_pop(exp);
-				delete input;
-				ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
-				output = nullptr;
+				output.wait_and_pop(exp);
 				t1.join();
 			}
 			else if (line == "%reset")
 			{
 				currentS = RUNNING;
-				input->push(line);
+				input.push(line);
 
-				output->wait_and_pop(exp);
-				delete input;
-				ThreadSafeQueue<std::string> * input = new ThreadSafeQueue<std::string>;
-				output = nullptr;
+				output.wait_and_pop(exp);
 				t1.join();
-				Consumer cons(input);
-				output = cons.getReturnQueue();
+				Consumer cons(&input, &output);
 				std::thread t2(&Consumer::run, cons);
 				t1 = std::move(t2);
 			}
@@ -136,8 +125,8 @@ void repl(){
 			}
 			else
 			{
-				input->push(line);
-				output->wait_and_pop(exp);
+				input.push(line);
+				output.wait_and_pop(exp);
 				if (exp.isHeadSymbol())
 				{
 					if (exp.head().asSymbol() == "!!!ERROR!!!")
@@ -159,8 +148,7 @@ void repl(){
 			if (line == "%start")
 			{
 				currentS = RUNNING;
-				Consumer cons(input);
-				output = cons.getReturnQueue();
+				Consumer cons(&input, &output);
 				std::thread t2(&Consumer::run, cons);
 				t1 = std::move(t2);
 			}
@@ -189,8 +177,6 @@ void repl(){
 			return;
 		}
 	}
-  delete input;
-  delete output;
 }
 
 int main(int argc, char *argv[])
