@@ -1,5 +1,9 @@
 #include "consumer.hpp"
 
+Consumer::Consumer()
+{
+}
+
 Consumer::Consumer(ThreadSafeQueue<std::string> *inputQ, ThreadSafeQueue<Expression> *outputQ)
 {
 	OperadQ = inputQ;
@@ -24,7 +28,7 @@ void Consumer::run()
 		{
 			std::istringstream expression(input);
 			if (!interp.parseStream(expression)) {
-				std::string t = "Invalid Expression.Could not parse.";
+				std::string t = "Invalid Expression. Could not parse.";
 				Expression result(t);
 				result.setError();
 				//std::cerr << "Invalid Expression. Could not parse." << std::endl;

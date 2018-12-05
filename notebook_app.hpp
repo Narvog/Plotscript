@@ -6,6 +6,7 @@
 #include "interpreter.hpp"
 #include "startup_config.hpp"
 #include "semantic_error.hpp"
+#include "consumer.hpp"
 
 
 #include <string>
@@ -22,6 +23,7 @@ class NotebookApp : public QWidget
 public:
 
 	NotebookApp(QWidget * parent = nullptr);
+	~NotebookApp();
 	void resetAPP();
 signals:
 	void setOut();
@@ -33,13 +35,25 @@ private:
 	QPushButton * stop = new QPushButton();
 	QPushButton * reset = new QPushButton();
 
-	Interpreter interp;
 	QString line;
+
+	ThreadSafeQueue<std::string> inputQ;
+	ThreadSafeQueue<Expression> outputQ;
+
+	Consumer cons;
+	std::thread t1;
+
+	enum State { RUNNING, STOPPED };
+	State currentS = RUNNING;
 signals:
 	void wasSet(QString inputLine);
 	void expSet(Expression exp);
+
 private slots:
 	void inputSet(QString inputLine);
+	void stopRepl();
+	void startRepl();
+	void resetRepl();
 };
 
 

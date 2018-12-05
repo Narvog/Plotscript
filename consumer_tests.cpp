@@ -79,7 +79,7 @@ TEST_CASE("test4", "[consumer]")
 	input.push(line);
 
 	output.wait_and_pop(exp);
-	std::string t = "Invalid Expression.Could not parse.";
+	std::string t = "Invalid Expression. Could not parse.";
 	CHECK(exp == Expression(t));
 
 
