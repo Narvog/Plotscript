@@ -4,26 +4,14 @@ void NotebookApp::inputSet(QString inputLine)
 	line = inputLine;
 	Expression exp;
 	std::string trans;
-	interupt = false;
+	//interupt = false;
 	switch (currentS)
 	{
 	case NotebookApp::RUNNING:
 		inputQ.push(line.toStdString());
 		
 
-		/*
-		while ((!outputQ.try_pop(exp)))
-		{
-
-		} 
-		*/
-		/*
-		while (outputQ.empty())
-		{
-			outputQ.try_pop(exp);
-		}
-		*/
-		//outputQ.wait_and_pop(exp);
+		outputQ.wait_and_pop(exp);
 
 		if (exp.isError())
 		{
@@ -33,7 +21,7 @@ void NotebookApp::inputSet(QString inputLine)
 			}
 			else
 			{
-				if (interupt == true)
+				if (exp.head().asSymbol() == "Error: interpreter kernel interrupted")
 				{
 					resetAPP();
 				}
@@ -52,30 +40,6 @@ void NotebookApp::inputSet(QString inputLine)
 	default:
 		break;
 	}
-
-	/*
-	std::istringstream expression(line.toStdString());
-	if (!interp.parseStream(expression)) {
-		emit wasSet("Error: Invalid Expression. Could not parse.");
-	}
-	else {
-		bool error = false;
-		Expression exp;
-		try {
-			exp = interp.evaluate();
-			//emit exp
-		}
-		catch (const SemanticError & ex) {
-			error = true;
-			emit wasSet(ex.what());
-		}
-		if (!error)
-		{
-			emit expSet(exp);
-
-		}
-	}
-	*/
 
 }
 
@@ -108,7 +72,7 @@ NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent)
 	interrupt->setObjectName("interrupt");
 	interrupt->setText("Interrupt");
 	layout->addWidget(interrupt, 0, 3, 1, 1);
-	//QObject::connect(reset, &QPushButton::released, this, &NotebookApp::resetRepl);
+	QObject::connect(interrupt, &QPushButton::released, this, &NotebookApp::interuptRepl);
 
 
 	cons = Consumer(&inputQ, &outputQ);
@@ -194,6 +158,7 @@ void NotebookApp::resetRepl()
 	}
 }
 
+
 void NotebookApp::interuptRepl()
 {
 	if (currentS == RUNNING)
@@ -201,3 +166,4 @@ void NotebookApp::interuptRepl()
 		interupt = true;
 	}
 }
+

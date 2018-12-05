@@ -15,6 +15,7 @@
 #include <fstream>
 #include <QLayout>
 #include <QPushButton>
+#include <QTimer>
 
 class NotebookApp : public QWidget
 {

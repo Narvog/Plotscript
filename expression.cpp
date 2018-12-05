@@ -1258,7 +1258,8 @@ Expression Expression::helper_make_point(Environment & env, const double x, cons
 Expression Expression::eval(Environment & env){
 	if (interupt == true)
 	{
-		SemanticError("Error: interpreter kernel interrupted");
+		interupt = false;
+		throw SemanticError("Error: interpreter kernel interrupted");
 	}
   if (m_head.isSymbol() && m_head.asSymbol() == "list") {
 	  return handle_list(env);

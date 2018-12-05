@@ -16,7 +16,7 @@ Defines the Expression type and assiciated functions.
 
 #include <atomic>
 
-static std::atomic_bool interupt = false;
+static std::atomic_bool interupt(false);
 
 // forward declare Environment
 class Environment;
