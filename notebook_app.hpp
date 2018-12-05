@@ -34,6 +34,7 @@ private:
 	QPushButton * start = new QPushButton();
 	QPushButton * stop = new QPushButton();
 	QPushButton * reset = new QPushButton();
+	QPushButton * interrupt = new QPushButton();
 
 	QString line;
 
@@ -54,6 +55,7 @@ private slots:
 	void stopRepl();
 	void startRepl();
 	void resetRepl();
+	void interuptRepl();
 };
 
 

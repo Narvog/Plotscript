@@ -1256,6 +1256,10 @@ Expression Expression::helper_make_point(Environment & env, const double x, cons
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
 Expression Expression::eval(Environment & env){
+	if (interupt == true)
+	{
+		SemanticError("Error: interpreter kernel interrupted");
+	}
   if (m_head.isSymbol() && m_head.asSymbol() == "list") {
 	  return handle_list(env);
   }

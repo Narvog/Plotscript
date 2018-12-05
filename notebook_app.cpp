@@ -4,11 +4,18 @@ void NotebookApp::inputSet(QString inputLine)
 	line = inputLine;
 	Expression exp;
 	std::string trans;
+	interupt = false;
 	switch (currentS)
 	{
 	case NotebookApp::RUNNING:
 		inputQ.push(line.toStdString());
 		
+		/*
+		while (outputQ.empty())
+		{
+			outputQ.try_pop(exp);
+		}
+		*/
 		outputQ.wait_and_pop(exp);
 
 		if (exp.isError())
@@ -19,6 +26,10 @@ void NotebookApp::inputSet(QString inputLine)
 			}
 			else
 			{
+				if (interupt == true)
+				{
+					resetAPP();
+				}
 				emit wasSet(QString::fromStdString(exp.head().asSymbol()));
 			}
 			
@@ -66,9 +77,9 @@ NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent)
 	input->setObjectName("input");
 	output->setObjectName("output");
 	auto layout = new QGridLayout();
-	layout->addWidget(input, 1, 0, 1, 3);
+	layout->addWidget(input, 1, 0, 1, 4);
 	QObject::connect(input, QOverload<QString>::of(&InputWidget::textInputCompleted), this, &NotebookApp::inputSet);
-	layout->addWidget(output, 2, 0, 1, 3);
+	layout->addWidget(output, 2, 0, 1, 4);
 	QObject::connect(this, QOverload<QString>::of(&NotebookApp::wasSet), output, &OutputWidget::recievedData);
 	QObject::connect(this, &NotebookApp::expSet, output, &OutputWidget::recievedExp);
 
@@ -86,6 +97,11 @@ NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent)
 	reset->setText("Reset Kernal");
 	layout->addWidget(reset, 0, 2, 1, 1);
 	QObject::connect(reset, &QPushButton::released, this, &NotebookApp::resetRepl);
+
+	interrupt->setObjectName("interrupt");
+	interrupt->setText("Interrupt");
+	layout->addWidget(interrupt, 0, 3, 1, 1);
+	//QObject::connect(reset, &QPushButton::released, this, &NotebookApp::resetRepl);
 
 
 	cons = Consumer(&inputQ, &outputQ);
@@ -168,5 +184,13 @@ void NotebookApp::resetRepl()
 	else
 	{
 
+	}
+}
+
+void NotebookApp::interuptRepl()
+{
+	if (currentS == RUNNING)
+	{
+		interupt = true;
 	}
 }

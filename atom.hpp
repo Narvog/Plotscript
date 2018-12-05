@@ -1,6 +1,7 @@
 /*! \file atom.hpp
 Defines the Atom type and associated functions.
  */
+
 #ifndef ATOM_HPP
 #define ATOM_HPP
 

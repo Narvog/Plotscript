@@ -1,6 +1,9 @@
 /*! \file expression.hpp
 Defines the Expression type and assiciated functions.
  */
+
+
+
 #ifndef EXPRESSION_HPP
 #define EXPRESSION_HPP
 
@@ -9,6 +12,11 @@ Defines the Expression type and assiciated functions.
 
 #include "token.hpp"
 #include "atom.hpp"
+
+
+#include <atomic>
+
+static std::atomic_bool interupt = false;
 
 // forward declare Environment
 class Environment;
