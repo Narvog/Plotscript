@@ -42,11 +42,15 @@ private slots:
   void Test27();
   void Test28();
   void Test29();
+  void Test30();
 
 private:
 	NotebookApp Notebook;
 	InputWidget * input;
 	OutputWidget * output;
+	QPushButton * stop;
+	QPushButton * start;
+	QPushButton * reset;
 };
 
 void NotebookTest::initTestCase(){
@@ -58,6 +62,15 @@ void NotebookTest::initTestCase(){
 
 	output = Notebook.findChild<OutputWidget *>("output");
 	QVERIFY2(output, "Couldn't find the OutputWidget.");
+
+	stop = Notebook.findChild<QPushButton *>("stop");
+	QVERIFY2(stop, "Couldn't find the Stop button");
+
+	start = Notebook.findChild<QPushButton *>("start");
+	QVERIFY2(start, "Couldn't find the Start button");
+
+	reset = Notebook.findChild<QPushButton *>("reset");
+	QVERIFY2(reset, "Couldn't find the Reset button");
 
 	QVERIFY2(Notebook.isVisible(), "Notebook didn't show up.");
 	QVERIFY2(output->isVisible(), "InputWidget is visable");
@@ -937,77 +950,86 @@ void NotebookTest::Test25()
 
 void NotebookTest::Test26()
 {
-	std::string program = R"( 
-(begin
-   (define f (lambda (x) (^ e x)))
-	(continuous-plot f (list -1 1))
-)
-)";
-	input->setPlainText(QString::fromStdString(program));
+	stop->click();
+
+	input->setPlainText("(cos pi)");
 	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
 	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
-	/*
 	auto view = output->findChild<QGraphicsView *>();
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
-	*/
-	Notebook.resetAPP();
+	auto list = scene->items();
+	auto text = list[0];
+	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "Error: interpreter kernal not running", "Incorrect Text");
+
 }
 
 void NotebookTest::Test27()
 {
-	std::string program = R"( 
-(begin
-   (define f (lambda (x) (/ 1 (+ 1 (^ e (- (* 5 x)))))))
-	(continuous-plot f (list -1 1))
-)
-)";
-	input->setPlainText(QString::fromStdString(program));
+	start->click();
+
+	input->setPlainText("(cos pi)");
 	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
 	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
-	/*
 	auto view = output->findChild<QGraphicsView *>();
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
-	*/
-	Notebook.resetAPP();
+	auto list = scene->items();
+	auto text = list[0];
+	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "(-1)", "Incorrect Text");
 }
 
 void NotebookTest::Test28()
 {
-	std::string program = R"( 
-(begin
-   (define f (lambda (x) (/ 1 (+ 1 (^ e (- (* 20 x)))))))
-	(continuous-plot f (list -1 1))
-)
-)";
-	input->setPlainText(QString::fromStdString(program));
+
+	input->setPlainText("(define a -1)");
 	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
 	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
-	/*
 	auto view = output->findChild<QGraphicsView *>();
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
-	*/
-	Notebook.resetAPP();
+	auto list = scene->items();
+	auto text = list[0];
+	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "(-1)", "Incorrect Text");
 }
 
 void NotebookTest::Test29()
 {
-	std::string program = R"( 
-(begin
-    (define f (lambda (x) (x))) 
-    (continuous-plot f (list -2 2))
-)
-)";
-	input->setPlainText(QString::fromStdString(program));
+	input->setPlainText("(define a -1)");
 	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
 	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
-	/*
 	auto view = output->findChild<QGraphicsView *>();
 	QVERIFY2(view->isVisible(), "Can't find view.");
 	auto scene = view->scene();
-	*/
-	Notebook.resetAPP();
+	auto list = scene->items();
+	auto text = list[0];
+	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	qDebug() << textL->toPlainText();
+	QVERIFY2(textL->toPlainText() == "Attempt to overwrite symbol in environemnt", "Incorrect Text");
 }
+
+void NotebookTest::Test30()
+{
+	reset->click();
+	input->setPlainText("(define a -1)");
+	QTest::keyEvent(QTest::Press, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	QTest::keyEvent(QTest::Release, input, Qt::Key_Return, Qt::KeyboardModifier(Qt::ShiftModifier), 10);
+	auto view = output->findChild<QGraphicsView *>();
+	QVERIFY2(view->isVisible(), "Can't find view.");
+	auto scene = view->scene();
+	auto list = scene->items();
+	auto text = list[0];
+	auto textL = qgraphicsitem_cast<QGraphicsTextItem *>(text);
+	QVERIFY2(textL->isVisible(), "Text Not Visible");
+	QVERIFY2(textL->toPlainText() == "(-1)", "Incorrect Text");
+}
+
+
 

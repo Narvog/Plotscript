@@ -232,6 +232,7 @@ void repl(){
 
 int main(int argc, char *argv[])
 {  
+	
   if(argc == 2){
     return eval_from_file(argv[1]);
   }
@@ -244,6 +245,7 @@ int main(int argc, char *argv[])
     }
   }
   else{
+	  install_handler();
     repl();
   }
     

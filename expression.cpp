@@ -8,6 +8,8 @@
 #include "environment.hpp"
 #include "semantic_error.hpp"
 
+volatile std::atomic_bool interupt(false);
+
 Expression::Expression(){}
 
 Expression::Expression(const Atom & a){
