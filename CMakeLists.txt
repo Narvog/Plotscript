@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(PLOTSCRIPT CXX)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 # EDIT
 # add any files you create related to the interpreter here
 # excluding unit tests
