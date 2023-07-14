@@ -1,7 +1,3 @@
-Introduction
--------------
-
-The starter code for the semester project implements the basic language interpreter for a language we will call Plot Script (plotscript) in less than 700 lines of code. It also includes unit and integration tests for the base implementation, as well as a driver program implementing a read-eval-print loop. These pages define the base language and document its implementation. **You will need to read and understand this code in order to be able to modify it.**
 
 Plot Script Overview
 ---------------------
@@ -216,10 +212,3 @@ The reference environment also includes tools for memory and coverage analysis. 
 > make memtest
 > make coverage
 ```
-
-We will discuss these tools in class.
-
-Notes
-------
-
-[1]: This distinction is not always clear, many interpreters do compile to machine code or to a virtual machine. These are called just-in-time or JITing interpreters.
